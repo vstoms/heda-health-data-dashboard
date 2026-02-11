@@ -1,0 +1,414 @@
+{
+  "common": {
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "select": "Sélectionner",
+    "day": "Jour",
+    "date": "Date",
+    "start": "Début",
+    "end": "Fin",
+    "duration": "Durée",
+    "score": "Score",
+    "type": "Type",
+    "noData": "—",
+    "average": "Moyenne",
+    "avgLabel": "Moy : {{value}}",
+    "updated": "Mis à jour le {{date}}",
+    "total": "Total",
+    "change": "Variation",
+    "latest": "Dernier",
+    "tip": "Astuce : {{text}}",
+    "distance": "Distance",
+    "steps": "Pas",
+    "weight": "Poids",
+    "fatMass": "Masse grasse",
+    "muscleMass": "Masse musculaire",
+    "boneMass": "Masse osseuse",
+    "hydration": "Hydratation",
+    "sleep": "Sommeil",
+    "nap": "Sieste",
+    "night": "Nuit",
+    "device": "Appareil",
+    "bp": "Tension Artérielle",
+    "activities": "Activités",
+    "spo2": "SpO2",
+    "height": "Taille",
+    "systolic": "Systolique",
+    "diastolic": "Diastolique",
+    "hr": "FC",
+    "calories": "Calories",
+    "page": "Page {{current}} sur {{total}}",
+    "exportExcel": "Exporter vers Excel",
+    "exporting": "Exportation...",
+    "lightSleep": "Sommeil léger",
+    "deepSleep": "Sommeil profond",
+    "remSleep": "Sommeil paradoxal",
+    "awake": "Éveil",
+    "sleepScore": "Score de sommeil"
+  },
+  "device": {
+    "sleep_mat": "Capteur de sommeil",
+    "tracker": "Traqueur"
+  },
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français"
+  },
+  "units": {
+    "day_one": "{{count}} jour",
+    "day_other": "{{count}} jours",
+    "hourShort": "h",
+    "minuteShort": "min",
+    "kg": "kg",
+    "km": "km",
+    "steps": "pas",
+    "stepsPerDay": "pas/jour",
+    "bpm": "bpm",
+    "percent": "%"
+  },
+  "app": {
+    "loading": "Chargement...",
+    "confirmClear": "Êtes-vous sûr de vouloir effacer toutes les données stockées ?",
+    "errors": {
+      "invalidZip": "Erreur lors du traitement du fichier. Veuillez vous assurer qu'il s'agit d'un export ZIP Withings valide."
+    },
+    "upload": {
+      "processing": "Traitement de vos données...",
+      "dropPrompt": "Déposez votre export ici",
+      "title": "Télécharger l'export de données de santé",
+      "subtitle": "Glissez-déposez votre fichier ZIP ici, ou cliquez pour parcourir"
+    },
+    "landing": {
+      "title": "Heda : Vos tendances de santé - Tableau de bord de vos données de santé",
+      "subtitle": "Téléchargez votre export de données de santé pour clarifier vos tendances",
+      "howTo": {
+        "title": "Comment obtenir vos données :",
+        "deviceSwitchLabel": "Instructions pour",
+        "deviceComputer": "Ordinateur",
+        "deviceMobile": "Mobile",
+        "computer": {
+          "step1": "Allez sur https://account.withings.com/export/my_data.",
+          "step2": "Sélectionnez votre profil utilisateur.",
+          "step3": "Cliquez sur \"Start my archive\".",
+          "step4": "Attendez l'email \"Download your data\", ouvrez le lien et téléchargez le ZIP.",
+          "step5": "Importez le fichier ZIP ici."
+        },
+        "mobile": {
+          "step1": "Ouvrez l'application Withings.",
+          "step2": "Appuyez sur l'icône de profil (en haut à gauche).",
+          "step3": "Appuyez sur Paramètres (en haut à droite), puis sur \"Download your data\".",
+          "step4": "Sélectionnez votre profil utilisateur, puis appuyez sur \"Start my archive\".",
+          "step5": "Attendez l'email \"Download your data\", ouvrez le lien, téléchargez le ZIP, puis importez le ZIP ici."
+        }
+      },
+      "privacy": {
+        "title": "100% Privé :",
+        "description": "Tout le traitement des données se fait localement et hors ligne dans votre navigateur. Rien n'est envoyé à un serveur."
+      },
+      "seo": {
+        "keywords": "Heda, tableau de bord santé, Withings, clarté des données, tendances, open source, confidentialité, local-first, trackers, balances connectées"
+      }
+    }
+  },
+  "dashboard": {
+    "dataBrowser": {
+      "title": "Explorateur de données",
+      "quality": "Qualité des données"
+    },
+    "quality": {
+      "outliersTitle": "Anomalies de sommeil",
+      "outliersDesc": "Problèmes de données potentiels ou valeurs extrêmes détectées.",
+      "noOutliers": "Aucune anomalie détectée.",
+      "trackerDiffsTitle": "Écarts entre capteurs",
+      "trackerDiffsDesc": "Différences significatives entre les enregistrements du tapis de sommeil (Mat) et du capteur portable (Tracker).",
+      "noDiffs": "Aucun écart significatif trouvé.",
+      "timingDiff": "Écart d'horaire",
+      "reasons": {
+        "shortSleep": "Sommeil très court",
+        "longSleep": "Sommeil très long",
+        "highAwake": "Temps éveillé élevé",
+        "abnormalHR": "FC anormale"
+      }
+    },
+    "header": {
+      "title": "Heda",
+      "subtitle": "Vos tendances de santé • Votre dashboard de données de santé privé",
+      "manageEvents": "Gérer les événements",
+      "reimport": "Réimporter les données",
+      "clear": "Effacer les données"
+    },
+    "reimportConfirm": "La réimportation remplacera les données de santé mais conservera vos événements. Continuer ?",
+    "overview": {
+      "dateRange": {
+        "title": "Période",
+        "description": "Couverture et récence",
+        "none": "Aucune période sélectionnée",
+        "updated": "Mis à jour le {{date}}",
+        "eventActive": "Analyse de cet événement"
+      },
+      "badges": {
+        "steps": "Pas",
+        "sleep": "Sommeil",
+        "weight": "Poids"
+      },
+      "activity": {
+        "title": "Activité",
+        "description": "Mouvement quotidien",
+        "avgStepsPerDay": "Moy. pas / jour"
+      },
+      "sleep": {
+        "title": "Sommeil",
+        "description": "Durée et horaires",
+        "avgSleepPerNight": "Moy. sommeil / nuit",
+        "bed": "Coucher",
+        "wake": "Lever",
+        "score": "Score"
+      },
+      "body": {
+        "title": "Corps",
+        "description": "Dernier et variation",
+        "latestWeight": "Dernier poids"
+      },
+      "tips": {
+        "title": "Comment tirer le meilleur parti de cette vue",
+        "description": "Utilisez le contexte pour lire les tendances plus rapidement",
+        "item1": "Utilisez la période et la moyenne mobile pour lisser le bruit.",
+        "item2": "Ajoutez des événements (voyages, blocs d'entraînement, maladie, étapes de la vie) pour annoter les tendances.",
+        "item3": "Excluez les week-ends ou les siestes pour comparer des routines cohérentes.",
+        "tip": "Passez en mode Personnalisé et zoomez sur une semaine spécifique pour comprendre les changements soudains."
+      }
+    },
+    "filters": {
+      "rollingAvg": "Moy. mobile",
+      "sleepMode": {
+        "matFirst": "Prioriser le lit",
+        "trackerFirst": "Prioriser la montre",
+        "average": "Fusionner les deux"
+      },
+      "range": {
+        "last12Months": "12 derniers mois",
+        "last3Months": "3 derniers mois",
+        "last1Month": "Dernier mois",
+        "all": "Toutes les données",
+        "custom": "Personnalisé"
+      }
+    },
+    "tabs": {
+      "activity": "Activité",
+      "sleep": "Sommeil",
+      "body": "Corps",
+      "emptyActivity": "Aucune donnée d'activité disponible dans cet export.",
+      "emptySleep": "Aucune donnée de sommeil disponible dans cet export.",
+      "emptyWeight": "Aucune donnée de poids disponible dans cet export.",
+      "reimport": "Réimporter les données",
+      "excludeNaps": "Exclure les siestes (≤4h entre 9h-20h)",
+      "excludeWeekends": "Exclure les week-ends",
+      "weekendDays": "Jours de week-end",
+      "sleepSettings": {
+        "infoText": "Les valeurs sont automatiquement recalculées dans tous les graphiques en fonction de vos préférences."
+      },
+      "smallSessions": "Petites sessions"
+    },
+    "privacy": {
+      "title": "Note sur la confidentialité :",
+      "description": "Toutes les données sont traitées localement dans votre navigateur. Rien n'est envoyé à un serveur. Les données sont stockées dans IndexedDB pour des chargements ultérieurs plus rapides."
+    },
+    "stats": {
+      "seasonTitle": "Statistiques par saison",
+      "seasonDescription": "Toutes les années combinées (Printemps, Été, Automne, Hiver).",
+      "dayTypeTitle": "Statistiques par type de jour",
+      "dayTypeDescription": "Jours de semaine vs jours de week-end selon vos paramètres."
+    }
+  },
+  "events": {
+    "title": "Événements & Contexte",
+    "description": "Ajoutez des événements personnels (un jour ou des périodes) pour expliquer les tendances sur vos graphiques.",
+    "confirmDelete": "Supprimer cet événement ?",
+    "errors": {
+      "titleRequired": "Le titre est requis.",
+      "startRequired": "La date de début est requise.",
+      "endRequired": "La date de fin est requise pour une période.",
+      "endAfterStart": "La date de fin doit être après la date de début.",
+      "noEvents": "Aucun événement trouvé dans le fichier.",
+      "importFailed": "Impossible d'importer les événements. Veuillez utiliser un fichier JSON valide."
+    },
+    "untitled": "Sans titre",
+    "form": {
+      "title": "Titre",
+      "type": "Type",
+      "start": "Début",
+      "end": "Fin",
+      "color": "Couleur",
+      "notes": "Notes",
+      "titlePlaceholder": "ex: Vacances",
+      "typePlaceholder": "Sélectionner le type",
+      "notesPlaceholder": "Détails optionnels"
+    },
+    "type": {
+      "point": "Un jour",
+      "range": "Période"
+    },
+    "actions": {
+      "add": "Ajouter un événement",
+      "update": "Mettre à jour l'événement",
+      "export": "Exporter les événements",
+      "import": "Importer les événements",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "empty": "Aucun événement pour le moment. Ajoutez-en un ci-dessus."
+  },
+  "tables": {
+    "rangeEvent": {
+      "title": "Stats des périodes",
+      "description": "Moyennes et variation de poids sur chaque période.",
+      "headers": {
+        "event": "Événement",
+        "weightDelta": "Δ Poids",
+        "avgSteps": "Pas / jour",
+        "avgSleep": "Sommeil",
+        "avgDeep": "Profond",
+        "avgLight": "Léger",
+        "avgRem": "REM",
+        "avgAwake": "Éveillé",
+        "avgAsleep": "Endormi",
+        "avgWake": "Lever",
+        "avgTimeToSleep": "Temps d'endormissement",
+        "avgTimeToWake": "Temps de lever",
+        "avgHr": "FC Sommeil",
+        "sleepQuality": "Sommeil",
+        "sleepSchedule": "Horaires",
+        "activity": "Activité",
+        "shortDeep": "P",
+        "shortLight": "L",
+        "shortRem": "R",
+        "shortAwake": "E",
+        "shortHr": "FC",
+        "shortLatencySleep": "Endormi en",
+        "shortLatencyWake": "Réveil en"
+      }
+    }
+  },
+  "charts": {
+    "noDataSelectedRange": "Aucune donnée disponible pour la période sélectionnée.",
+    "noSleepDataSelectedRange": "Aucune donnée de sommeil disponible pour la période sélectionnée.",
+    "noSleepStageData": "Aucune donnée de phase de sommeil disponible dans cet export.",
+    "noSeriesData": "Aucune donnée de {{series}} disponible dans cet export.",
+    "noStepDataSelectedRange": "Aucune donnée de pas disponible pour la période sélectionnée.",
+    "noWeightDataSelectedRange": "Aucune donnée de poids disponible pour la période sélectionnée.",
+    "noDataSelectedRangeShort": "Pas de données pour la période",
+    "rollingLabel_one": "{{count}} jour",
+    "rollingLabel_other": "{{count}} jours",
+    "rollingAvgTooltip": "Moy. {{rollingLabel}} : {{value}}",
+    "yAxisRolling": "{{label}}",
+    "rollingHeader": "{{title}} (Moyenne mobile sur {{rollingLabel}})",
+    "summaryLabel": "{{label}} : {{value}}",
+    "windowLabel": "Fenêtre : {{start}} - {{end}}",
+    "steps": {
+      "title": "Pas quotidiens",
+      "header": "Pas quotidiens (Moyenne mobile sur {{rollingLabel}})",
+      "summary": "Moy. {{rollingLabel}} : {{avg}} {{stepsPerDay}} • {{totalLabel}} : {{total}} {{steps}}",
+      "tooltip": "Moy. {{rollingLabel}} : {{avg}} {{steps}}",
+      "axis": "Pas",
+      "series": "Pas Moy. {{rollingLabel}}"
+    },
+    "sleep": {
+      "durationTitle": "Durée du sommeil",
+      "durationHeader": "Durée du sommeil (Moyenne mobile sur {{rollingLabel}})",
+      "durationSummary": "Moy. {{rollingLabel}} : {{duration}} / nuit",
+      "timesHeader": "Horaires de sommeil (Moyenne mobile sur {{rollingLabel}})",
+      "timesSummary": "Coucher moy. : {{asleep}} · Lever moy. : {{wake}}",
+      "durationAxis": "Durée",
+      "durationTooltip": "Moy. {{rollingLabel}} : {{duration}}",
+      "asleep": "Coucher",
+      "wake": "Lever",
+      "asleepAxis": "Heure de coucher",
+      "wakeAxis": "Heure de lever",
+      "asleepTooltip": "Coucher : {{value}}",
+      "wakeTooltip": "Lever : {{value}}",
+      "duration": "Durée",
+      "hrAverage": "FC moyenne",
+      "deep": "Sommeil Profond",
+      "light": "Sommeil Léger",
+      "rem": "Sommeil paradoxal (REM)",
+      "awake": "Temps éveillé",
+      "doubleTrackerTitle": "Comparaison Appareils (Capteur vs Montre)",
+      "doubleTrackerDescription": "Divergence : Biais moyen systématique (± Écart-type) et différence absolue typique.",
+      "doubleTrackerCount_one": "{{count}} nuit détectée",
+      "doubleTrackerCount_other": "{{count}} nuits détectées",
+      "avgAbsDiff": "Variation typique : ",
+      "biasMatHigher": "Capteur plus élevé",
+      "biasTrackerHigher": "Montre plus élevée",
+      "biasMatLonger": "Capteur plus long",
+      "biasTrackerLonger": "Montre plus longue",
+      "biasMatLater": "Capteur plus tard",
+      "biasTrackerLater": "Montre plus tard"
+    },
+    "composition": {
+      "title": "Composition du sommeil",
+      "header": "Composition du sommeil (Moyenne mobile sur {{rollingLabel}})",
+      "summary": "Moy. : {{summary}}",
+      "axis": "Sommeil",
+      "deep": "Profond",
+      "light": "Léger",
+      "rem": "REM",
+      "awake": "Éveillé"
+    },
+    "weight": {
+      "title": "Tendance du poids",
+      "summary": "Moyenne : {{avg}} {{unit}} • Plage : {{min}} - {{max}} {{unit}}",
+      "axis": "Poids ({{unit}})",
+      "tooltip": "Poids : {{value}} {{unit}}",
+      "series": "Poids",
+      "metricSummary": "Moyenne : {{avg}}% • Plage : {{min}}% - {{max}}%",
+      "metricNoData": "Aucune donnée disponible pour la période sélectionnée."
+    },
+    "metrics": {
+      "fatMass": "Masse grasse",
+      "muscleMass": "Masse musculaire",
+      "boneMass": "Masse osseuse",
+      "hydration": "Hydratation"
+    },
+    "sleepMetrics": {
+      "avgHeartRate": {
+        "title": "Fréquence cardiaque moyenne",
+        "summaryLabel": "FC Moy",
+        "series": "Moyenne FC",
+        "axis": "Fréquence cardiaque (bpm)"
+      },
+      "timeToSleep": {
+        "title": "Temps d'endormissement",
+        "summaryLabel": "Moy. temps d'endormissement",
+        "series": "Durée d'endormissement",
+        "axis": "Temps d'endormissement"
+      },
+      "timeToWake": {
+        "title": "Temps de lever",
+        "summaryLabel": "Moy. temps de lever",
+        "series": "Durée de lever",
+        "axis": "Temps de lever"
+      },
+      "awakeTime": {
+        "title": "Temps éveillé",
+        "summaryLabel": "Moy. éveillé",
+        "series": "Éveillé",
+        "axis": "Temps éveillé"
+      }
+    }
+  },
+  "weekdays": {
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche"
+  },
+  "seasons": {
+    "spring": "Printemps",
+    "summer": "Été",
+    "autumn": "Automne",
+    "winter": "Hiver"
+  }
+}

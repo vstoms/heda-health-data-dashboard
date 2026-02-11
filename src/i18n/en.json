@@ -1,0 +1,414 @@
+{
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "select": "Select",
+    "day": "Day",
+    "date": "Date",
+    "start": "Start",
+    "end": "End",
+    "duration": "Duration",
+    "score": "Score",
+    "type": "Type",
+    "noData": "—",
+    "average": "Average",
+    "avgLabel": "Avg: {{value}}",
+    "updated": "Updated {{date}}",
+    "total": "Total",
+    "change": "Change",
+    "latest": "Latest",
+    "tip": "Tip: {{text}}",
+    "distance": "Distance",
+    "steps": "Steps",
+    "weight": "Weight",
+    "fatMass": "Fat Mass",
+    "muscleMass": "Muscle Mass",
+    "boneMass": "Bone Mass",
+    "hydration": "Hydration",
+    "sleep": "Sleep",
+    "nap": "Nap",
+    "night": "Night",
+    "device": "Device",
+    "bp": "Blood Pressure",
+    "activities": "Activities",
+    "spo2": "SpO2",
+    "height": "Height",
+    "systolic": "Systolic",
+    "diastolic": "Diastolic",
+    "hr": "HR",
+    "calories": "Calories",
+    "page": "Page {{current}} of {{total}}",
+    "exportExcel": "Export to Excel",
+    "exporting": "Exporting...",
+    "lightSleep": "Light Sleep",
+    "deepSleep": "Deep Sleep",
+    "remSleep": "REM Sleep",
+    "awake": "Awake",
+    "sleepScore": "Sleep Score"
+  },
+  "device": {
+    "sleep_mat": "Sleep Mat",
+    "tracker": "Tracker"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "French"
+  },
+  "units": {
+    "day_one": "{{count}} day",
+    "day_other": "{{count}} days",
+    "hourShort": "h",
+    "minuteShort": "min",
+    "kg": "kg",
+    "km": "km",
+    "steps": "steps",
+    "stepsPerDay": "steps/day",
+    "bpm": "bpm",
+    "percent": "%"
+  },
+  "app": {
+    "loading": "Loading...",
+    "confirmClear": "Are you sure you want to clear all stored data?",
+    "errors": {
+      "invalidZip": "Error processing file. Please ensure it is a valid Withings export ZIP."
+    },
+    "upload": {
+      "processing": "Processing your data...",
+      "dropPrompt": "Drop your data export here",
+      "title": "Upload Health Data Export",
+      "subtitle": "Drag and drop your ZIP file here, or click to browse"
+    },
+    "landing": {
+      "title": "Heda: Your Health Trends - Health Data Dashboard",
+      "subtitle": "Upload your health data export to gain clarity on your trends",
+      "howTo": {
+        "title": "How to get your data:",
+        "deviceSwitchLabel": "Instructions for",
+        "deviceComputer": "Computer",
+        "deviceMobile": "Mobile",
+        "computer": {
+          "step1": "Go to https://account.withings.com/export/my_data.",
+          "step2": "Select your user account.",
+          "step3": "Click \"Start my archive\".",
+          "step4": "Wait for the email \"Download your data\", open the link, and download the ZIP.",
+          "step5": "Upload the ZIP file here."
+        },
+        "mobile": {
+          "step1": "Open the Withings app.",
+          "step2": "Tap your profile icon (top left).",
+          "step3": "Tap Settings (top right), then tap \"Download your data\".",
+          "step4": "Select your user account, then tap \"Start my archive\".",
+          "step5": "Wait for the email \"Download your data\", open the link, download the ZIP, then upload the ZIP here."
+        }
+      },
+      "privacy": {
+        "title": "100% Private:",
+        "description": "All data processing happens in your browser. Nothing is sent to any server."
+      },
+      "seo": {
+        "keywords": "Heda, health dashboard, data visualization, health data, privacy, local-first, heart rate, sleep tracking, exercise data, wearable trends, fitness trackers, connected scales"
+      }
+    }
+  },
+  "dashboard": {
+    "dataBrowser": {
+      "title": "Data Browser",
+      "quality": "Data Quality"
+    },
+    "quality": {
+      "outliersTitle": "Sleep Outliers",
+      "outliersDesc": "Potential data issues or extreme values detected.",
+      "noOutliers": "No outliers detected.",
+      "trackerDiffsTitle": "Tracker Discrepancies",
+      "trackerDiffsDesc": "Significant differences between Mat and Tracker recordings.",
+      "noDiffs": "No significant discrepancies found.",
+      "timingDiff": "Timing Diff",
+      "reasons": {
+        "shortSleep": "Very short sleep",
+        "longSleep": "Very long sleep",
+        "highAwake": "High awake time",
+        "abnormalHR": "Abnormal HR"
+      }
+    },
+    "header": {
+      "title": "Heda - Health Data Dashboard",
+      "subtitle": "Your Health Trends • Your Private Health Dashboard",
+      "manageEvents": "Manage Events",
+      "reimport": "Reimport Data",
+      "clear": "Clear Data"
+    },
+    "reimportConfirm": "Reimporting will replace health data but keep your events. Continue?",
+    "overview": {
+      "dateRange": {
+        "title": "Date range",
+        "description": "Coverage and recency",
+        "none": "No range selected",
+        "updated": "Updated {{date}}",
+        "eventActive": "Analyzing this event range"
+      },
+      "badges": {
+        "steps": "Steps",
+        "sleep": "Sleep",
+        "weight": "Weight"
+      },
+      "activity": {
+        "title": "Activity",
+        "description": "Daily movement",
+        "avgStepsPerDay": "Avg steps / day"
+      },
+      "sleep": {
+        "title": "Sleep",
+        "description": "Duration and timing",
+        "avgSleepPerNight": "Avg sleep / night",
+        "bed": "Bed",
+        "wake": "Wake",
+        "score": "Score"
+      },
+      "body": {
+        "title": "Body",
+        "description": "Latest and change",
+        "latestWeight": "Latest weight"
+      },
+      "tips": {
+        "title": "How to get the most out of this view",
+        "description": "Use context to read trends faster",
+        "item1": "Use the date range and rolling average to smooth noise.",
+        "item2": "Add events (travel, training blocks, illness, stages of life) to annotate trends.",
+        "item3": "Exclude weekends or naps to compare consistent routines.",
+        "tip": "Switch to Custom and zoom into a specific week to understand sudden changes."
+      }
+    },
+    "filters": {
+      "rollingAvg": "Rolling avg",
+      "sleepMode": {
+        "matFirst": "Favor Sleep Mat",
+        "trackerFirst": "Favor Tracker",
+        "average": "Merge/Average both"
+      },
+      "range": {
+        "last12Months": "Last 12 months",
+        "last3Months": "Last 3 months",
+        "last1Month": "Last month",
+        "all": "All data",
+        "custom": "Custom"
+      }
+    },
+    "tabs": {
+      "activity": "Activity",
+      "sleep": "Sleep",
+      "body": "Body",
+      "emptyActivity": "No activity data available in this export.",
+      "emptySleep": "No sleep data available in this export.",
+      "emptyWeight": "No weight data available in this export.",
+      "reimport": "Reimport data",
+      "excludeNaps": "Exclude naps (≤4h between 9am–8pm)",
+      "excludeWeekends": "Exclude weekend days",
+      "weekendDays": "Weekend days",
+      "sleepSettings": {
+        "infoText": "Values are automatically recalculated across all sleep charts based on your preferences."
+      },
+      "smallSessions": "Small sessions"
+    },
+    "privacy": {
+      "title": "Privacy Note:",
+      "description": "All data is processed locally and offline in your browser. Nothing is sent to any server."
+    },
+    "stats": {
+      "seasonTitle": "Season Stats",
+      "seasonDescription": "All years combined (Spring, Summer, Autumn, Winter).",
+      "dayTypeTitle": "Day Type Stats",
+      "dayTypeDescription": "Week days vs weekend days using your selected weekend days."
+    }
+  },
+  "events": {
+    "title": "Events & Context",
+    "description": "Add personal events (one-day or ranges) to explain patterns in your charts.",
+    "confirmDelete": "Delete this event?",
+    "errors": {
+      "titleRequired": "Title is required.",
+      "startRequired": "Start date is required.",
+      "endRequired": "End date is required for a range.",
+      "endAfterStart": "End date must be after start date.",
+      "noEvents": "No events found in file.",
+      "importFailed": "Could not import events. Please use a valid JSON file."
+    },
+    "untitled": "Untitled",
+    "form": {
+      "title": "Title",
+      "type": "Type",
+      "start": "Start",
+      "end": "End",
+      "color": "Color",
+      "notes": "Notes",
+      "titlePlaceholder": "e.g. Vacation",
+      "typePlaceholder": "Select type",
+      "notesPlaceholder": "Optional details"
+    },
+    "type": {
+      "point": "One-day",
+      "range": "Range"
+    },
+    "actions": {
+      "add": "Add Event",
+      "update": "Update Event",
+      "export": "Export Events",
+      "import": "Import Events",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "empty": "No events yet. Add one above."
+  },
+  "tables": {
+    "rangeEvent": {
+      "title": "Range Event Stats",
+      "description": "Averages and weight change across each range event.",
+      "headers": {
+        "event": "Event",
+        "weightDelta": "Weight Δ",
+        "avgSteps": "Steps",
+        "avgSleep": "Sleep",
+        "avgDeep": "Deep",
+        "avgLight": "Light",
+        "avgRem": "REM",
+        "avgAwake": "Awake",
+        "avgAsleep": "Asleep",
+        "avgWake": "Wake",
+        "avgTimeToSleep": "Time to Sleep",
+        "avgTimeToWake": "Time to Wake",
+        "avgHr": "Sleep HR",
+        "sleepQuality": "Sleep",
+        "sleepSchedule": "Schedule",
+        "activity": "Activity",
+        "shortDeep": "D",
+        "shortLight": "L",
+        "shortRem": "R",
+        "shortAwake": "A",
+        "shortHr": "HR",
+        "shortLatencySleep": "Asleep in ",
+        "shortLatencyWake": "Wake up in "
+      }
+    }
+  },
+  "charts": {
+    "noDataSelectedRange": "No data available for the selected range.",
+    "noSleepDataSelectedRange": "No sleep data available for the selected range.",
+    "noSleepStageData": "No sleep stage data available in this export.",
+    "noSeriesData": "No {{series}} data available in this export.",
+    "noStepDataSelectedRange": "No step data available for the selected range.",
+    "noWeightDataSelectedRange": "No weight data available for the selected range.",
+    "noDataSelectedRangeShort": "No data for selected range",
+    "rollingLabel_one": "{{count}}-day",
+    "rollingLabel_other": "{{count}}-day",
+    "rollingAvgTooltip": "{{rollingLabel}} avg: {{value}}",
+    "yAxisRolling": "{{label}}",
+    "rollingHeader": "{{title}} ({{rollingLabel}} Rolling Average)",
+    "summaryLabel": "{{label}}: {{value}}",
+    "windowLabel": "Window: {{start}} - {{end}}",
+    "steps": {
+      "title": "Daily Steps",
+      "header": "Daily Steps ({{rollingLabel}} Rolling Average)",
+      "summary": "{{rollingLabel}} avg: {{avg}} {{stepsPerDay}} • {{totalLabel}}: {{total}} {{steps}}",
+      "tooltip": "{{rollingLabel}} avg: {{avg}} {{steps}}",
+      "axis": "Steps",
+      "series": "{{rollingLabel}} Avg Steps"
+    },
+    "sleep": {
+      "durationTitle": "Sleep Duration",
+      "durationHeader": "Sleep Duration ({{rollingLabel}} Rolling Average)",
+      "durationSummary": "{{rollingLabel}} avg: {{duration}} / night",
+      "timesHeader": "Sleep Times ({{rollingLabel}} Rolling Average)",
+      "timesSummary": "Avg asleep: {{asleep}} · Avg wake: {{wake}}",
+      "durationAxis": "Duration",
+      "durationTooltip": "{{rollingLabel}} avg: {{duration}}",
+      "asleep": "Asleep",
+      "wake": "Wake",
+      "asleepAxis": "Asleep time",
+      "wakeAxis": "Wake time",
+      "asleepTooltip": "Asleep: {{value}}",
+      "wakeTooltip": "Wake: {{value}}",
+      "duration": "Duration",
+      "hrAverage": "Avg Heart Rate",
+      "deep": "Deep Sleep",
+      "light": "Light Sleep",
+      "rem": "REM Sleep",
+      "awake": "Awake Time",
+      "doubleTrackerTitle": "Device Comparison (Mat vs Tracker)",
+      "doubleTrackerDescription": "Discrepancy: Mean systemic bias (± STD) and typical absolute difference.",
+      "doubleTrackerCount_one": "{{count}} night detected",
+      "doubleTrackerCount_other": "{{count}} nights detected",
+      "avgAbsDiff": "Typical diff: ",
+      "biasMatHigher": "Mat reports higher",
+      "biasTrackerHigher": "Tracker reports higher",
+      "biasMatLonger": "Mat reports longer",
+      "biasTrackerLonger": "Tracker reports longer",
+      "biasMatLater": "Mat detects later",
+      "biasTrackerLater": "Tracker detects later"
+    },
+    "composition": {
+      "title": "Sleep Composition",
+      "header": "Sleep Composition ({{rollingLabel}} Rolling Average)",
+      "summary": "Avg: {{summary}}",
+      "axis": "Sleep",
+      "deep": "Deep",
+      "light": "Light",
+      "rem": "REM",
+      "awake": "Awake"
+    },
+    "weight": {
+      "title": "Weight Trend",
+      "summary": "Average: {{avg}} {{unit}} • Range: {{min}} - {{max}} {{unit}}",
+      "axis": "Weight ({{unit}})",
+      "tooltip": "Weight: {{value}} {{unit}}",
+      "series": "Weight",
+      "metricSummary": "Average: {{avg}}% • Range: {{min}}% - {{max}}%",
+      "metricNoData": "No data available for selected range."
+    },
+    "metrics": {
+      "fatMass": "Fat Mass",
+      "muscleMass": "Muscle Mass",
+      "boneMass": "Bone Mass",
+      "hydration": "Hydration"
+    },
+    "sleepMetrics": {
+      "avgHeartRate": {
+        "title": "Average Heart Rate",
+        "summaryLabel": "Avg HR",
+        "series": "HR Average",
+        "axis": "Heart rate (bpm)"
+      },
+      "timeToSleep": {
+        "title": "Time to Fall Asleep",
+        "summaryLabel": "Avg time to sleep",
+        "series": "Duration to Sleep",
+        "axis": "Time to fall asleep"
+      },
+      "timeToWake": {
+        "title": "Time to Wake Up",
+        "summaryLabel": "Avg time to wake",
+        "series": "Duration to Wake",
+        "axis": "Time to wake up"
+      },
+      "awakeTime": {
+        "title": "Awake Time",
+        "summaryLabel": "Avg awake",
+        "series": "Awake",
+        "axis": "Awake time"
+      }
+    }
+  },
+  "weekdays": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "seasons": {
+    "spring": "Spring",
+    "summer": "Summer",
+    "autumn": "Autumn",
+    "winter": "Winter"
+  }
+}
