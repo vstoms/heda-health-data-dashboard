@@ -122,12 +122,32 @@
       "trackerDiffsTitle": "Tracker Discrepancies",
       "trackerDiffsDesc": "Significant differences between Mat and Tracker recordings.",
       "noDiffs": "No significant discrepancies found.",
+      "durationGap": "Duration Gap",
+      "timeInBedGap": "Time-In-Bed Gap",
       "timingDiff": "Timing Diff",
+      "discrepancySignals": "Signals",
+      "matLabel": "Mat",
+      "trackerLabel": "Tracker",
+      "asleepLabel": "Asleep",
+      "wakeLabel": "Wake",
+      "overlapLabel": "Overlap",
+      "efficiencyGapLabel": "Efficiency gap",
       "reasons": {
         "shortSleep": "Very short sleep",
         "longSleep": "Very long sleep",
         "highAwake": "High awake time",
-        "abnormalHR": "Abnormal HR"
+        "abnormalHR": "Abnormal HR",
+        "durationIqrHigh": "Duration far above your usual range",
+        "durationIqrLow": "Duration far below your usual range",
+        "awakeIqrHigh": "Awake time far above your usual range"
+      },
+      "discrepancyReasons": {
+        "durationGap": "Large sleep duration gap",
+        "timeInBedGap": "Large time-in-bed gap",
+        "asleepGap": "Large sleep onset timing gap",
+        "wakeGap": "Large wake timing gap",
+        "lowOverlap": "Low interval overlap between devices",
+        "efficiencyGap": "Large sleep efficiency gap"
       }
     },
     "header": {

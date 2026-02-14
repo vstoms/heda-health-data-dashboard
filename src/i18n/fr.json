@@ -122,12 +122,32 @@
       "trackerDiffsTitle": "Écarts entre capteurs",
       "trackerDiffsDesc": "Différences significatives entre les enregistrements du tapis de sommeil (Mat) et du capteur portable (Tracker).",
       "noDiffs": "Aucun écart significatif trouvé.",
+      "durationGap": "Écart de durée",
+      "timeInBedGap": "Écart de temps au lit",
       "timingDiff": "Écart d'horaire",
+      "discrepancySignals": "Signaux",
+      "matLabel": "Mat",
+      "trackerLabel": "Tracker",
+      "asleepLabel": "Endormissement",
+      "wakeLabel": "Réveil",
+      "overlapLabel": "Chevauchement",
+      "efficiencyGapLabel": "Écart d'efficacité",
       "reasons": {
         "shortSleep": "Sommeil très court",
         "longSleep": "Sommeil très long",
         "highAwake": "Temps éveillé élevé",
-        "abnormalHR": "FC anormale"
+        "abnormalHR": "FC anormale",
+        "durationIqrHigh": "Durée bien au-dessus de votre plage habituelle",
+        "durationIqrLow": "Durée bien en dessous de votre plage habituelle",
+        "awakeIqrHigh": "Temps éveillé bien au-dessus de votre plage habituelle"
+      },
+      "discrepancyReasons": {
+        "durationGap": "Écart important de durée de sommeil",
+        "timeInBedGap": "Écart important de temps au lit",
+        "asleepGap": "Écart important d'heure d'endormissement",
+        "wakeGap": "Écart important d'heure de réveil",
+        "lowOverlap": "Chevauchement faible entre les intervalles",
+        "efficiencyGap": "Écart important d'efficacité du sommeil"
       }
     },
     "header": {
