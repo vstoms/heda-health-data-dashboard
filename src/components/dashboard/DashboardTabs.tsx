@@ -1,6 +1,6 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Activity, Database, Moon, Scale } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StepsChart } from "@/components/charts/activity/StepsChart";
 import { SleepChart } from "@/components/charts/sleep/SleepChart";
@@ -86,210 +86,237 @@ export function DashboardTabs({
   onTriggerReimport,
 }: DashboardTabsProps) {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState(
-    hasSteps
-      ? "activity"
-      : hasSleep
-        ? "sleep"
-        : hasWeight
-          ? "body"
-          : "explorer",
+  const shouldReduceMotion = useReducedMotion();
+  const tabOrder = useMemo(
+    () => [
+      ...(hasSteps ? ["activity"] : []),
+      ...(hasSleep ? ["sleep"] : []),
+      ...(hasWeight ? ["body"] : []),
+      "explorer",
+    ],
+    [hasSleep, hasSteps, hasWeight],
+  );
+  const [activeTab, setActiveTab] = useState(tabOrder[0]);
+  const [tabDirection, setTabDirection] = useState(0);
+
+  useEffect(() => {
+    if (!tabOrder.includes(activeTab)) {
+      setActiveTab(tabOrder[0]);
+      setTabDirection(0);
+    }
+  }, [activeTab, tabOrder]);
+
+  const handleTabChange = useCallback(
+    (nextTab: string) => {
+      if (nextTab === activeTab) return;
+      const currentIndex = tabOrder.indexOf(activeTab);
+      const nextIndex = tabOrder.indexOf(nextTab);
+      if (currentIndex !== -1 && nextIndex !== -1) {
+        setTabDirection(nextIndex > currentIndex ? 1 : -1);
+      } else {
+        setTabDirection(0);
+      }
+      setActiveTab(nextTab);
+    },
+    [activeTab, tabOrder],
   );
 
   const visibleTabsCount =
     (hasSteps ? 1 : 0) + (hasSleep ? 1 : 0) + (hasWeight ? 1 : 0) + 1; // +1 for explorer
 
+  const renderActiveContent = useCallback(() => {
+    if (activeTab === "activity") {
+      return hasSteps ? (
+        <StepsChart
+          data={stepsData}
+          events={events}
+          range={range}
+          rollingWindowDays={rollingWindowDays}
+          customRange={customRange}
+          onRangeChange={(nextRange) => onRangeChange(nextRange)}
+        />
+      ) : (
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border py-12 text-center text-muted-foreground">
+          <p>{t("dashboard.tabs.emptyActivity")}</p>
+          <Button size="sm" variant="outline" onClick={onTriggerReimport}>
+            {t("dashboard.tabs.reimport")}
+          </Button>
+        </div>
+      );
+    }
+
+    if (activeTab === "sleep") {
+      return hasSleep ? (
+        <>
+          <SleepSettings
+            excludeNaps={excludeNaps}
+            onExcludeNapsChange={onExcludeNapsChange}
+            excludeWeekends={excludeWeekends}
+            onExcludeWeekendsChange={onExcludeWeekendsChange}
+            weekendDays={weekendDays}
+            onWeekendDaysChange={onWeekendDaysChange}
+            sleepCountingMode={sleepCountingMode}
+            onSleepCountingModeChange={onSleepCountingModeChange}
+          />
+          <SleepChart
+            data={allSleepDataProcessed}
+            events={events}
+            range={range}
+            rollingWindowDays={rollingWindowDays}
+            rollingExcludeDays={rollingExcludeDays}
+            customRange={customRange}
+            doubleTrackerStats={doubleTrackerStats}
+            onRangeChange={(nextRange) => onRangeChange(nextRange)}
+          />
+        </>
+      ) : (
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border py-12 text-center text-muted-foreground">
+          <p>{t("dashboard.tabs.emptySleep")}</p>
+          <Button size="sm" variant="outline" onClick={onTriggerReimport}>
+            {t("dashboard.tabs.reimport")}
+          </Button>
+        </div>
+      );
+    }
+
+    if (activeTab === "body") {
+      return hasWeight ? (
+        <WeightChart
+          data={weightData}
+          events={events}
+          range={range}
+          customRange={customRange}
+          onRangeChange={(nextRange) => onRangeChange(nextRange)}
+        />
+      ) : (
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border py-12 text-center text-muted-foreground">
+          <p>{t("dashboard.tabs.emptyWeight")}</p>
+          <Button size="sm" variant="outline" onClick={onTriggerReimport}>
+            {t("dashboard.tabs.reimport")}
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <DataBrowser
+        sleep={allSleepData}
+        steps={stepsData}
+        weight={weightData}
+        bp={bpData}
+        height={heightData}
+        spo2={spo2Data}
+        activities={activitiesData}
+      />
+    );
+  }, [
+    activeTab,
+    allSleepData,
+    allSleepDataProcessed,
+    activitiesData,
+    bpData,
+    customRange,
+    doubleTrackerStats,
+    events,
+    excludeNaps,
+    excludeWeekends,
+    hasSleep,
+    hasSteps,
+    hasWeight,
+    heightData,
+    onExcludeNapsChange,
+    onExcludeWeekendsChange,
+    onRangeChange,
+    onSleepCountingModeChange,
+    onTriggerReimport,
+    range,
+    rollingExcludeDays,
+    rollingWindowDays,
+    sleepCountingMode,
+    spo2Data,
+    stepsData,
+    t,
+    weightData,
+    weekendDays,
+    onWeekendDaysChange,
+  ]);
+  const contentVariants = useMemo(
+    () => ({
+      enter: (direction: number) => ({
+        opacity: 0,
+        x: direction >= 0 ? 20 : -20,
+        y: 8,
+        scale: 0.995,
+      }),
+      center: { opacity: 1, x: 0, y: 0, scale: 1 },
+      exit: (direction: number) => ({
+        opacity: 0,
+        x: direction >= 0 ? -14 : 14,
+        y: -6,
+        scale: 0.99,
+      }),
+    }),
+    [],
+  );
+
   return (
-    <Tabs
-      defaultValue={activeTab}
-      onValueChange={setActiveTab}
-      className="w-full"
-    >
-      <TabsList
-        className="grid w-full"
-        style={{
-          gridTemplateColumns: `repeat(${visibleTabsCount}, minmax(0, 1fr))`,
-        }}
+    <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+      <motion.div
+        initial={shouldReduceMotion ? false : { opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       >
-        {hasSteps && (
-          <TabsTrigger value="activity">
-            <Activity className="w-4 h-4 mr-2" />
-            {t("dashboard.tabs.activity")}
+        <TabsList
+          className="grid w-full"
+          style={{
+            gridTemplateColumns: `repeat(${visibleTabsCount}, minmax(0, 1fr))`,
+          }}
+        >
+          {hasSteps && (
+            <TabsTrigger value="activity">
+              <Activity className="w-4 h-4 mr-2" />
+              {t("dashboard.tabs.activity")}
+            </TabsTrigger>
+          )}
+          {hasSleep && (
+            <TabsTrigger value="sleep">
+              <Moon className="w-4 h-4 mr-2" />
+              {t("dashboard.tabs.sleep")}
+            </TabsTrigger>
+          )}
+          {hasWeight && (
+            <TabsTrigger value="body">
+              <Scale className="w-4 h-4 mr-2" />
+              {t("dashboard.tabs.body")}
+            </TabsTrigger>
+          )}
+          <TabsTrigger value="explorer">
+            <Database className="w-4 h-4 mr-2" />
+            {t("dashboard.tabs.data", "Data")}
           </TabsTrigger>
-        )}
-        {hasSleep && (
-          <TabsTrigger value="sleep">
-            <Moon className="w-4 h-4 mr-2" />
-            {t("dashboard.tabs.sleep")}
-          </TabsTrigger>
-        )}
-        {hasWeight && (
-          <TabsTrigger value="body">
-            <Scale className="w-4 h-4 mr-2" />
-            {t("dashboard.tabs.body")}
-          </TabsTrigger>
-        )}
-        <TabsTrigger value="explorer">
-          <Database className="w-4 h-4 mr-2" />
-          {t("dashboard.tabs.data", "Data")}
-        </TabsTrigger>
-      </TabsList>
+        </TabsList>
+      </motion.div>
 
       <div className="mt-4">
-        <AnimatePresence mode="wait">
-          <TabsContent value="activity" key="activity" forceMount>
-            {activeTab === "activity" && (
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.98,
-                  transition: { duration: 0.15 },
-                }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="space-y-6"
-              >
-                {hasSteps ? (
-                  <StepsChart
-                    data={stepsData}
-                    events={events}
-                    range={range}
-                    rollingWindowDays={rollingWindowDays}
-                    customRange={customRange}
-                    onRangeChange={(nextRange) => onRangeChange(nextRange)}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border py-12 text-center text-muted-foreground">
-                    <p>{t("dashboard.tabs.emptyActivity")}</p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={onTriggerReimport}
-                    >
-                      {t("dashboard.tabs.reimport")}
-                    </Button>
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="sleep" key="sleep" forceMount>
-            {activeTab === "sleep" && (
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.98,
-                  transition: { duration: 0.15 },
-                }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="space-y-6"
-              >
-                {hasSleep ? (
-                  <>
-                    <SleepSettings
-                      excludeNaps={excludeNaps}
-                      onExcludeNapsChange={onExcludeNapsChange}
-                      excludeWeekends={excludeWeekends}
-                      onExcludeWeekendsChange={onExcludeWeekendsChange}
-                      weekendDays={weekendDays}
-                      onWeekendDaysChange={onWeekendDaysChange}
-                      sleepCountingMode={sleepCountingMode}
-                      onSleepCountingModeChange={onSleepCountingModeChange}
-                    />
-                    <SleepChart
-                      data={allSleepDataProcessed}
-                      events={events}
-                      range={range}
-                      rollingWindowDays={rollingWindowDays}
-                      rollingExcludeDays={rollingExcludeDays}
-                      customRange={customRange}
-                      doubleTrackerStats={doubleTrackerStats}
-                      onRangeChange={(nextRange) => onRangeChange(nextRange)}
-                    />
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border py-12 text-center text-muted-foreground">
-                    <p>{t("dashboard.tabs.emptySleep")}</p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={onTriggerReimport}
-                    >
-                      {t("dashboard.tabs.reimport")}
-                    </Button>
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="body" key="body" forceMount>
-            {activeTab === "body" && (
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.98,
-                  transition: { duration: 0.15 },
-                }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="space-y-6"
-              >
-                {hasWeight ? (
-                  <WeightChart
-                    data={weightData}
-                    events={events}
-                    range={range}
-                    customRange={customRange}
-                    onRangeChange={(nextRange) => onRangeChange(nextRange)}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border py-12 text-center text-muted-foreground">
-                    <p>{t("dashboard.tabs.emptyWeight")}</p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={onTriggerReimport}
-                    >
-                      {t("dashboard.tabs.reimport")}
-                    </Button>
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="explorer" key="explorer" forceMount>
-            {activeTab === "explorer" && (
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.98,
-                  transition: { duration: 0.15 },
-                }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="space-y-6"
-              >
-                <DataBrowser
-                  sleep={allSleepData}
-                  steps={stepsData}
-                  weight={weightData}
-                  bp={bpData}
-                  height={heightData}
-                  spo2={spo2Data}
-                  activities={activitiesData}
-                />
-              </motion.div>
-            )}
-          </TabsContent>
-        </AnimatePresence>
+        <TabsContent value={activeTab} forceMount className="mt-0">
+          <AnimatePresence mode="wait" initial={false} custom={tabDirection}>
+            <motion.div
+              key={activeTab}
+              custom={tabDirection}
+              variants={contentVariants}
+              initial={shouldReduceMotion ? { opacity: 0 } : "enter"}
+              animate={shouldReduceMotion ? { opacity: 1 } : "center"}
+              exit={shouldReduceMotion ? { opacity: 0 } : "exit"}
+              transition={{
+                duration: shouldReduceMotion ? 0.2 : 0.36,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="space-y-6"
+            >
+              {renderActiveContent()}
+            </motion.div>
+          </AnimatePresence>
+        </TabsContent>
       </div>
     </Tabs>
   );
