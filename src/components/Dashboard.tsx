@@ -162,6 +162,7 @@ export function Dashboard({
             hasSeasonData={metrics.hasSeasonData}
             hasDayTypeData={metrics.hasDayTypeData}
             onEventClick={handleEventClick}
+            onOpenEvents={() => setEventsOpen(true)}
           />
         </MotionWrapper>
 

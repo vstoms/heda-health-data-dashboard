@@ -237,7 +237,10 @@
       "seasonTitle": "Statistiques par saison",
       "seasonDescription": "Toutes les années combinées (Printemps, Été, Automne, Hiver).",
       "dayTypeTitle": "Statistiques par type de jour",
-      "dayTypeDescription": "Jours de semaine vs jours de week-end selon vos paramètres."
+      "dayTypeDescription": "Jours de semaine vs jours de week-end selon vos paramètres.",
+      "eventsEmptyTitle": "Analyse des événements",
+      "eventsEmptyDescription": "Ajoutez au moins une période pour comparer les phases et activer les statistiques basées sur les événements.",
+      "eventsEmptyCta": "Gérer les événements"
     }
   },
   "events": {

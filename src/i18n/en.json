@@ -237,7 +237,10 @@
       "seasonTitle": "Season Stats",
       "seasonDescription": "All years combined (Spring, Summer, Autumn, Winter).",
       "dayTypeTitle": "Day Type Stats",
-      "dayTypeDescription": "Week days vs weekend days using your selected weekend days."
+      "dayTypeDescription": "Week days vs weekend days using your selected weekend days.",
+      "eventsEmptyTitle": "Event Pattern Analysis",
+      "eventsEmptyDescription": "Add at least one range event to compare periods and unlock event-based pattern stats.",
+      "eventsEmptyCta": "Manage Events"
     }
   },
   "events": {
