@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import {
   Table,
   TableBody,
@@ -82,10 +83,9 @@ export function DataBrowser({
   const [isExporting, setIsExporting] = useState(false);
   const pageSize = 50;
 
-  // Reset page when category changes
   useEffect(() => {
     setCurrentPage(1);
-  }, []);
+  }, [category]);
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -156,10 +156,27 @@ export function DataBrowser({
   }, [category, sleep, steps, weight, bp, height, spo2, activities]);
 
   const totalPages = Math.ceil(sortedData.length / pageSize);
+
+  useEffect(() => {
+    if (totalPages === 0) return;
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const pagedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return sortedData.slice(start, start + pageSize);
   }, [sortedData, currentPage]);
+
+  const hasDataCategory =
+    sleep.length > 0 ||
+    steps.length > 0 ||
+    activities.length > 0 ||
+    weight.length > 0 ||
+    bp.length > 0 ||
+    spo2.length > 0 ||
+    height.length > 0;
 
   return (
     <Card className="mt-6">
@@ -181,91 +198,68 @@ export function DataBrowser({
               : t("common.exportExcel", "Export to Excel")}
           </Button>
         </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {sleep.length > 0 && (
-            <Button
-              variant={category === "sleep" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCategory("sleep")}
-            >
-              <Moon className="mr-2 h-4 w-4" />
-              {t("common.sleep", "Sleep")} ({sleep.length})
-            </Button>
-          )}
-          {steps.length > 0 && (
-            <Button
-              variant={category === "steps" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCategory("steps")}
-            >
-              <Footprints className="mr-2 h-4 w-4" />
-              {t("common.steps", "Steps")} ({steps.length})
-            </Button>
-          )}
-          {activities.length > 0 && (
-            <Button
-              variant={category === "activities" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCategory("activities")}
-            >
-              <Activity className="mr-2 h-4 w-4" />
-              {t("common.activities", "Activities")} ({activities.length})
-            </Button>
-          )}
-          {weight.length > 0 && (
-            <Button
-              variant={category === "weight" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCategory("weight")}
-            >
-              <Scale className="mr-2 h-4 w-4" />
-              {t("common.weight", "Weight")} ({weight.length})
-            </Button>
-          )}
-          {bp.length > 0 && (
-            <Button
-              variant={category === "bp" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCategory("bp")}
-            >
-              <Heart className="mr-2 h-4 w-4" />
-              {t("common.bp", "Blood Pressure")} ({bp.length})
-            </Button>
-          )}
-          {spo2.length > 0 && (
-            <Button
-              variant={category === "spo2" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCategory("spo2")}
-            >
-              <Droplets className="mr-2 h-4 w-4" />
-              {t("common.spo2", "SpO2")} ({spo2.length})
-            </Button>
-          )}
-          {height.length > 0 && (
-            <Button
-              variant={category === "height" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCategory("height")}
-            >
-              <Ruler className="mr-2 h-4 w-4" />
-              {t("common.height", "Height")} ({height.length})
-            </Button>
-          )}
-          <Button
-            variant={category === "quality" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCategory("quality")}
-            className="border-amber-500/50 hover:bg-amber-50 dark:hover:bg-amber-900/10"
-          >
-            <ShieldCheck className="mr-2 h-4 w-4 text-amber-500" />
-            {t("dashboard.dataBrowser.quality", "Data Quality")}
-          </Button>
-        </div>
+        <Tabs
+          value={category}
+          onValueChange={(value) => setCategory(value as Category)}
+          className="mt-4"
+        >
+          <TabsList className="h-auto w-full flex-wrap justify-start gap-1 p-1">
+            {sleep.length > 0 && (
+              <TabsTrigger value="sleep" className="text-xs">
+                <Moon className="mr-2 h-4 w-4" />
+                {t("common.sleep", "Sleep")} ({sleep.length})
+              </TabsTrigger>
+            )}
+            {steps.length > 0 && (
+              <TabsTrigger value="steps" className="text-xs">
+                <Footprints className="mr-2 h-4 w-4" />
+                {t("common.steps", "Steps")} ({steps.length})
+              </TabsTrigger>
+            )}
+            {activities.length > 0 && (
+              <TabsTrigger value="activities" className="text-xs">
+                <Activity className="mr-2 h-4 w-4" />
+                {t("common.activities", "Activities")} ({activities.length})
+              </TabsTrigger>
+            )}
+            {weight.length > 0 && (
+              <TabsTrigger value="weight" className="text-xs">
+                <Scale className="mr-2 h-4 w-4" />
+                {t("common.weight", "Weight")} ({weight.length})
+              </TabsTrigger>
+            )}
+            {bp.length > 0 && (
+              <TabsTrigger value="bp" className="text-xs">
+                <Heart className="mr-2 h-4 w-4" />
+                {t("common.bp", "Blood Pressure")} ({bp.length})
+              </TabsTrigger>
+            )}
+            {spo2.length > 0 && (
+              <TabsTrigger value="spo2" className="text-xs">
+                <Droplets className="mr-2 h-4 w-4" />
+                {t("common.spo2", "SpO2")} ({spo2.length})
+              </TabsTrigger>
+            )}
+            {height.length > 0 && (
+              <TabsTrigger value="height" className="text-xs">
+                <Ruler className="mr-2 h-4 w-4" />
+                {t("common.height", "Height")} ({height.length})
+              </TabsTrigger>
+            )}
+            <TabsTrigger value="quality" className="text-xs">
+              <ShieldCheck className="mr-2 h-4 w-4 text-amber-500" />
+              {t("dashboard.dataBrowser.quality", "Data Quality")}
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </CardHeader>
       <CardContent>
         {category === "quality" ? (
           <DataQualityPanel sleep={sleep} />
+        ) : !hasDataCategory ? (
+          <div className="py-12 text-center text-muted-foreground">
+            {t("common.noData", "—")}
+          </div>
         ) : (
           <>
             <div className="max-h-[600px] overflow-y-auto border rounded-md">
