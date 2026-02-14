@@ -3,6 +3,87 @@ import Papa from "papaparse";
 import { debugLog } from "@/lib/utils";
 import type { SleepData } from "@/types";
 
+const DAYTIME_NAP_START_HOUR = 9;
+const DAYTIME_NAP_END_HOUR = 20;
+const NAP_MAX_SECONDS = 4 * 60 * 60;
+
+function toNonNegativeInt(value: string | undefined): number {
+  if (!value) return 0;
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return 0;
+  return parsed;
+}
+
+function pickFirstValue(
+  row: Record<string, string>,
+  keys: string[],
+  fallback = "",
+): string {
+  for (const key of keys) {
+    const value = row[key];
+    if (value !== undefined && value !== null && value !== "") {
+      return value;
+    }
+  }
+  return fallback;
+}
+
+function getDateOnly(rawTimestamp: string): string {
+  if (!rawTimestamp) return "";
+  const trimmed = rawTimestamp.trim();
+  const sourceDate = trimmed.match(/^(\d{4}-\d{2}-\d{2})/)?.[1];
+  if (sourceDate) return sourceDate;
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return "";
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function buildTimestampKeys(value: string): string[] {
+  if (!value) return [];
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+  const keys = [trimmed];
+  const parsed = new Date(trimmed);
+  if (!Number.isNaN(parsed.getTime())) {
+    keys.push(String(parsed.getTime()));
+  }
+  return keys;
+}
+
+function addTimestampToSet(target: Set<string>, value: string): void {
+  for (const key of buildTimestampKeys(value)) {
+    target.add(key);
+  }
+}
+
+function hasTimestamp(target: Set<string>, value: string): boolean {
+  return buildTimestampKeys(value).some((key) => target.has(key));
+}
+
+function getTimeInBedSeconds(start: string, end: string): number {
+  if (!start || !end) return 0;
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    return 0;
+  }
+  const diff = Math.round((endDate.getTime() - startDate.getTime()) / 1000);
+  return diff > 0 ? diff : 0;
+}
+
+function isNapSession(startValue: string, timeInBedSeconds: number): boolean {
+  if (!startValue || timeInBedSeconds <= 0) return false;
+  const date = new Date(startValue);
+  if (Number.isNaN(date.getTime())) return false;
+  const hour = date.getHours();
+  const isDaytime =
+    hour >= DAYTIME_NAP_START_HOUR && hour < DAYTIME_NAP_END_HOUR;
+  return isDaytime && timeInBedSeconds <= NAP_MAX_SECONDS;
+}
+
 async function getRawSleepStartTimes(
   zip: JSZip,
   pattern: RegExp,
@@ -18,7 +99,7 @@ async function getRawSleepStartTimes(
     });
     parsed.data.forEach((row) => {
       const start = row.start || row.Start || "";
-      if (start) startTimes.add(start);
+      if (start) addTimestampToSet(startTimes, start);
     });
   }
   return startTimes;
@@ -47,119 +128,109 @@ export async function parseSleepData(zip: JSZip): Promise<SleepData[]> {
     /raw_tracker_sleep-state\.csv$/i,
   );
 
-  /**
-   * Golden Rules for Sleep Duration Calculation:
-   * 1. If 'Sleep duration (s)' is missing or 0, it is interpolated as the sum of all phases.
-   * 2. A session is a 'nap' if it starts between 09:00 and 20:00 and total duration (in bed) <= 4h.
-   * 3. The final sleep duration should exclude 'awake' time (effective sleep time).
-   */
-  const isNapSession = (startValue: string, durationSeconds: number) => {
-    if (!startValue || durationSeconds <= 0) return false;
-    const date = new Date(startValue);
-    if (Number.isNaN(date.getTime())) return false;
-    const hour = date.getHours();
-    const isDaytime = hour >= 9 && hour < 20;
-    const napMaxSeconds = 4 * 60 * 60;
-    return isDaytime && durationSeconds <= napMaxSeconds;
-  };
-
   return parsed.data
     .map((row) => {
-      const start =
-        row["Start date"] || row.start || row.Start || row.from || "";
-      const end = row["End date"] || row.end || row.End || row.to || "";
+      const start = pickFirstValue(row, [
+        "Start date",
+        "start",
+        "Start",
+        "from",
+      ]);
+      const end = pickFirstValue(row, ["End date", "end", "End", "to"]);
 
-      const lightSleep = parseInt(
-        row["Light sleep duration (s)"] ||
-          row.lightSleep ||
-          row["light (s)"] ||
-          "0",
-        10,
+      const lightSleep = toNonNegativeInt(
+        pickFirstValue(row, [
+          "Light sleep duration (s)",
+          "lightSleep",
+          "light (s)",
+          "light",
+        ]),
       );
-      const deepSleep = parseInt(
-        row["Deep sleep duration (s)"] ||
-          row.deepSleep ||
-          row["deep (s)"] ||
-          "0",
-        10,
+      const deepSleep = toNonNegativeInt(
+        pickFirstValue(row, [
+          "Deep sleep duration (s)",
+          "deepSleep",
+          "deep (s)",
+          "deep",
+        ]),
       );
-      const remSleep = parseInt(
-        row["REM sleep duration (s)"] || row.remSleep || row["rem (s)"] || "0",
-        10,
+      const remSleep = toNonNegativeInt(
+        pickFirstValue(row, [
+          "REM sleep duration (s)",
+          "remSleep",
+          "rem (s)",
+          "rem",
+        ]),
       );
-      const awake = parseInt(
-        row["Awake duration (s)"] || row.awake || row["awake (s)"] || "0",
-        10,
+      const awake = toNonNegativeInt(
+        pickFirstValue(row, ["Awake duration (s)", "awake", "awake (s)"]),
+      );
+      const phasesSleepTotal = lightSleep + deepSleep + remSleep;
+      const rawDuration = toNonNegativeInt(
+        pickFirstValue(row, ["Sleep duration (s)", "duration", "Duration"]),
       );
 
-      let duration = parseInt(
-        row["Sleep duration (s)"] || row.duration || row.Duration || "0",
-        10,
-      );
+      // Golden Rule #1: interpolate missing sleep duration from sleep phases (excluding awake).
+      const effectiveSleepSeconds =
+        rawDuration > 0 ? Math.max(0, rawDuration - awake) : phasesSleepTotal;
 
-      // Golden Rule #1: Use sum of phases if duration is missing
-      if (duration === 0) {
-        duration = lightSleep + deepSleep + remSleep + awake;
-      }
-
-      // Golden Rule #2: A nap is a daytime session <= 4h (based on total time in bed)
-      const isNap = isNapSession(start, duration);
-
-      // Golden Rule #3: The sleep duration should remove the awake time
-      duration = Math.max(0, duration - awake);
+      // Golden Rule #2: nap detection uses total time in bed (including awake).
+      const timeInBedFromBounds = getTimeInBedSeconds(start, end);
+      const timeInBedSeconds =
+        timeInBedFromBounds > 0
+          ? timeInBedFromBounds
+          : effectiveSleepSeconds + awake;
+      const isNap = isNapSession(start, timeInBedSeconds);
 
       // Device Detection: Check which raw file contains the start timestamp
       let deviceCategory: "bed" | "tracker" | undefined;
-      const nightEvents = row["Night events"] || row.nightEvents || "";
+      const nightEvents = pickFirstValue(row, ["Night events", "nightEvents"]);
 
-      if (bedStartTimes.has(start)) {
+      if (hasTimestamp(bedStartTimes, start)) {
         deviceCategory = "bed";
-      } else if (trackerStartTimes.has(start)) {
+      } else if (hasTimestamp(trackerStartTimes, start)) {
         deviceCategory = "tracker";
       } else if (nightEvents && nightEvents !== "{}") {
         // Fallback: Night events (snoring/breathing) are usually from a mat
         deviceCategory = "bed";
       }
 
-      const getDateOnly = (ts: string) => {
-        if (!ts) return "";
-        return ts.split(/[T ]/)[0];
-      };
-
       return {
+        // Golden Rule #4: attribute the session to the wake day, i.e. end date.
         date: getDateOnly(end) || getDateOnly(start),
         start,
         end,
-        duration,
+        // Golden Rule #3: keep duration as effective sleep (awake excluded).
+        duration: effectiveSleepSeconds,
         deepSleep,
         lightSleep,
         remSleep,
         awake,
         isNap,
         deviceCategory,
-        sleepScore: parseInt(row["Sleep score"] || row.sleepScore || "0", 10),
-        hrAverage: parseInt(
-          row["Average heart rate"] || row.hrAverage || "0",
-          10,
+        sleepScore: toNonNegativeInt(
+          pickFirstValue(row, ["Sleep score", "sleepScore"]),
         ),
-        hrMin: parseInt(row["Heart rate (min)"] || row.hrMin || "0", 10),
-        hrMax: parseInt(row["Heart rate (max)"] || row.hrMax || "0", 10),
-        durationToSleep: parseInt(
-          row["Duration to sleep (s)"] || row.durationToSleep || "0",
-          10,
+        hrAverage: toNonNegativeInt(
+          pickFirstValue(row, ["Average heart rate", "hrAverage"]),
         ),
-        durationToWakeUp: parseInt(
-          row["Duration to wake up (s)"] || row.durationToWakeUp || "0",
-          10,
+        hrMin: toNonNegativeInt(pickFirstValue(row, ["Heart rate (min)", "hrMin"])),
+        hrMax: toNonNegativeInt(pickFirstValue(row, ["Heart rate (max)", "hrMax"])),
+        durationToSleep: toNonNegativeInt(
+          pickFirstValue(row, ["Duration to sleep (s)", "durationToSleep"]),
         ),
-        snoring: parseInt(row["Snoring (s)"] || row.snoring || "0", 10),
-        snoringEpisodes: parseInt(
-          row["Snoring episodes"] || row.snoringEpisodes || "0",
-          10,
+        durationToWakeUp: toNonNegativeInt(
+          pickFirstValue(row, ["Duration to wake up (s)", "durationToWakeUp"]),
         ),
-        wakeupCount: parseInt(row["wake up"] || row.wakeupCount || "0", 10),
+        snoring: toNonNegativeInt(pickFirstValue(row, ["Snoring (s)", "snoring"])),
+        snoringEpisodes: toNonNegativeInt(
+          pickFirstValue(row, ["Snoring episodes", "snoringEpisodes"]),
+        ),
+        wakeupCount: toNonNegativeInt(
+          pickFirstValue(row, ["wake up", "wakeupCount"]),
+        ),
         nightEvents,
-        notes: row.Notes || row.notes || "",
+        notes: pickFirstValue(row, ["Notes", "notes"]),
       };
     })
     .filter((d) => d.duration > 0);
