@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Activity, Database, Moon, Scale } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StepsChart } from "@/components/charts/activity/StepsChart";
 import { SleepChart } from "@/components/charts/sleep/SleepChart";
@@ -98,18 +98,13 @@ export function DashboardTabs({
   );
   const [activeTab, setActiveTab] = useState(tabOrder[0]);
   const [tabDirection, setTabDirection] = useState(0);
-
-  useEffect(() => {
-    if (!tabOrder.includes(activeTab)) {
-      setActiveTab(tabOrder[0]);
-      setTabDirection(0);
-    }
-  }, [activeTab, tabOrder]);
+  const resolvedActiveTab = tabOrder.includes(activeTab) ? activeTab : tabOrder[0];
 
   const handleTabChange = useCallback(
     (nextTab: string) => {
-      if (nextTab === activeTab) return;
-      const currentIndex = tabOrder.indexOf(activeTab);
+      if (!tabOrder.includes(nextTab)) return;
+      if (nextTab === resolvedActiveTab) return;
+      const currentIndex = tabOrder.indexOf(resolvedActiveTab);
       const nextIndex = tabOrder.indexOf(nextTab);
       if (currentIndex !== -1 && nextIndex !== -1) {
         setTabDirection(nextIndex > currentIndex ? 1 : -1);
@@ -118,14 +113,14 @@ export function DashboardTabs({
       }
       setActiveTab(nextTab);
     },
-    [activeTab, tabOrder],
+    [resolvedActiveTab, tabOrder],
   );
 
   const visibleTabsCount =
     (hasSteps ? 1 : 0) + (hasSleep ? 1 : 0) + (hasWeight ? 1 : 0) + 1; // +1 for explorer
 
   const renderActiveContent = useCallback(() => {
-    if (activeTab === "activity") {
+    if (resolvedActiveTab === "activity") {
       return hasSteps ? (
         <StepsChart
           data={stepsData}
@@ -145,7 +140,7 @@ export function DashboardTabs({
       );
     }
 
-    if (activeTab === "sleep") {
+    if (resolvedActiveTab === "sleep") {
       return hasSleep ? (
         <>
           <SleepSettings
@@ -179,7 +174,7 @@ export function DashboardTabs({
       );
     }
 
-    if (activeTab === "body") {
+    if (resolvedActiveTab === "body") {
       return hasWeight ? (
         <WeightChart
           data={weightData}
@@ -210,7 +205,6 @@ export function DashboardTabs({
       />
     );
   }, [
-    activeTab,
     allSleepData,
     allSleepDataProcessed,
     activitiesData,
@@ -239,6 +233,7 @@ export function DashboardTabs({
     weightData,
     weekendDays,
     onWeekendDaysChange,
+    resolvedActiveTab,
   ]);
   const contentVariants = useMemo(
     () => ({
@@ -260,7 +255,7 @@ export function DashboardTabs({
   );
 
   return (
-    <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+    <Tabs value={resolvedActiveTab} onValueChange={handleTabChange} className="w-full">
       <motion.div
         initial={shouldReduceMotion ? false : { opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
@@ -298,10 +293,10 @@ export function DashboardTabs({
       </motion.div>
 
       <div className="mt-4">
-        <TabsContent value={activeTab} forceMount className="mt-0">
+        <TabsContent value={resolvedActiveTab} forceMount className="mt-0">
           <AnimatePresence mode="wait" initial={false} custom={tabDirection}>
             <motion.div
-              key={activeTab}
+              key={resolvedActiveTab}
               custom={tabDirection}
               variants={contentVariants}
               initial={shouldReduceMotion ? { opacity: 0 } : "enter"}
