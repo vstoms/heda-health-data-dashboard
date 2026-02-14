@@ -1,4 +1,3 @@
-import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DashboardEventsModal } from "@/components/dashboard/DashboardEventsModal";
 import { DashboardFiltersBar } from "@/components/dashboard/DashboardFiltersBar";
@@ -9,13 +8,11 @@ import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { DashboardPrivacyNote } from "@/components/dashboard/DashboardPrivacyNote";
 import { DashboardStatsTables } from "@/components/dashboard/DashboardStatsTables";
 import { DashboardTabs } from "@/components/dashboard/DashboardTabs";
-import { toInputDate } from "@/components/dashboard/helpers";
 import { useDashboardFilters } from "@/components/dashboard/hooks/useDashboardFilters";
+import { useDashboardInteractions } from "@/components/dashboard/hooks/useDashboardInteractions";
 import { useDashboardMetrics } from "@/components/dashboard/hooks/useDashboardMetrics";
 import { useDataBounds } from "@/components/dashboard/hooks/useDataBounds";
-import type { DateRangeWindow } from "@/components/dashboard/types";
 import { MotionWrapper, StaggerContainer } from "@/components/ui/MotionWrapper";
-import { debounce } from "@/lib/utils";
 import type { HealthData, PatternEvent } from "@/types";
 
 interface DashboardProps {
@@ -59,44 +56,25 @@ export function Dashboard({
     weekendDays,
     sleepCountingMode,
   });
-  const [eventsOpen, setEventsOpen] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const events = useMemo(() => data.events || [], [data.events]);
+  const {
+    eventsOpen,
+    setEventsOpen,
+    fileInputRef,
+    events,
+    currentEvent,
+    handleEventClick,
+    onRangeChange,
+    onTriggerReimport,
+    onReimportFileChange,
+  } = useDashboardInteractions({
+    data,
+    range,
+    customRange,
+    normalizeCustomRange,
+    onReimportData,
+    reimportConfirmText: t("dashboard.reimportConfirm"),
+  });
   const rollingExcludeDays = excludeWeekends ? weekendDays : [];
-
-  const currentEvent = useMemo(() => {
-    if (range !== "custom" || !customRange) return null;
-    const startStr = toInputDate(customRange.start);
-    const endStr = toInputDate(customRange.end);
-    return events.find(
-      (e) =>
-        e.type === "range" && e.startDate === startStr && e.endDate === endStr,
-    );
-  }, [range, customRange, events]);
-
-  const handleEventClick = (event: PatternEvent) => {
-    if (event.type === "range") {
-      const [sy, sm, sd] = event.startDate.split("-").map(Number);
-      const start = new Date(sy, sm - 1, sd);
-      const [ey, em, ed] = (event.endDate || event.startDate)
-        .split("-")
-        .map(Number);
-      const end = new Date(ey, em - 1, ed);
-      normalizeCustomRange(start, end);
-    }
-  };
-
-  const debouncedNormalizeRange = useMemo(
-    () =>
-      debounce((nextRange: DateRangeWindow) => {
-        normalizeCustomRange(nextRange.start, nextRange.end);
-      }, 250),
-    [normalizeCustomRange],
-  );
-
-  const handleReimportClick = () => {
-    fileInputRef.current?.click();
-  };
 
   return (
     <div className="w-full max-w-7xl mx-auto">
@@ -113,14 +91,7 @@ export function Dashboard({
         type="file"
         accept="application/zip,.zip"
         className="hidden"
-        onChange={(event) => {
-          const file = event.target.files?.[0];
-          if (!file) return;
-          if (confirm(t("dashboard.reimportConfirm"))) {
-            void onReimportData(file);
-          }
-          event.currentTarget.value = "";
-        }}
+        onChange={onReimportFileChange}
       />
 
       <StaggerContainer className="space-y-6 md:space-y-8 mt-6 md:mt-8">
@@ -175,8 +146,8 @@ export function Dashboard({
             onWeekendDaysChange={setWeekendDays}
             sleepCountingMode={sleepCountingMode}
             onSleepCountingModeChange={setSleepCountingMode}
-            onRangeChange={debouncedNormalizeRange}
-            onTriggerReimport={handleReimportClick}
+            onRangeChange={onRangeChange}
+            onTriggerReimport={onTriggerReimport}
           />
         </MotionWrapper>
 
@@ -196,7 +167,7 @@ export function Dashboard({
 
         <MotionWrapper>
           <DashboardFooter
-            onTriggerReimport={handleReimportClick}
+            onTriggerReimport={onTriggerReimport}
             onClear={onClear}
           />
         </MotionWrapper>

@@ -15,9 +15,18 @@ import {
   calculateSeasonStats,
   calculateSleepStats,
 } from "@/services/metrics";
-import type { HealthData } from "@/types";
+import type {
+  ActivityData,
+  BloodPressureData,
+  HealthData,
+  HeightData,
+  SleepData,
+  SpO2Data,
+  StepData,
+  WeightData,
+} from "@/types";
 
-interface DashboardMetricsFilters {
+export interface DashboardMetricsFilters {
   range: DateRangeOption;
   customRange: DateRangeWindow | null;
   excludeNaps: boolean;
@@ -26,10 +35,47 @@ interface DashboardMetricsFilters {
   sleepCountingMode: SleepCountingMode;
 }
 
+export interface DashboardMetricsResult {
+  hasSteps: boolean;
+  hasSleep: boolean;
+  hasWeight: boolean;
+  stepsData: StepData[];
+  sleepData: SleepData[];
+  weightData: WeightData[];
+  bpData: BloodPressureData[];
+  heightData: HeightData[];
+  spo2Data: SpO2Data[];
+  activitiesData: ActivityData[];
+  rangeStepsData: StepData[];
+  rangeSleepData: SleepData[];
+  rangeSleepDataProcessed: SleepData[];
+  allSleepDataProcessed: SleepData[];
+  rangeWeightData: WeightData[];
+  hasSeasonData: boolean;
+  hasDayTypeData: boolean;
+  overview: OverviewStats;
+  doubleTrackerStats: ReturnType<typeof calculateSleepStats>["doubleTrackerStats"];
+  allEventStats: ReturnType<typeof calculateEventStats>;
+  seasonStats: ReturnType<typeof calculateSeasonStats>;
+  dayTypeStats: ReturnType<typeof calculateDayTypeStats>;
+  magnitudeRanges: ReturnType<typeof buildMagnitudeRanges>;
+  seasonMagnitudeRanges: ReturnType<typeof buildMagnitudeRanges>;
+  dayTypeMagnitudeRanges: ReturnType<typeof buildMagnitudeRanges>;
+}
+
+function filterRangeData<T>(
+  items: T[],
+  getDate: (item: T) => Date,
+  range: DateRangeOption,
+  customRange: DateRangeWindow | null,
+) {
+  return filterByRange(items, getDate, range, customRange);
+}
+
 export function useDashboardMetrics(
   data: HealthData,
   filters: DashboardMetricsFilters,
-) {
+): DashboardMetricsResult {
   const {
     range,
     customRange,
@@ -39,27 +85,41 @@ export function useDashboardMetrics(
     sleepCountingMode,
   } = filters;
 
-  const hasSteps = data.steps.length > 0;
-  const hasSleep = data.sleep.length > 0;
-  const hasWeight = data.weight.length > 0;
+  const dataSources = useMemo(
+    () => ({
+      steps: data.steps,
+      sleep: data.sleep,
+      weight: data.weight,
+      bp: data.bp,
+      height: data.height,
+      spo2: data.spo2,
+      activities: data.activities,
+      events: data.events || [],
+    }),
+    [data],
+  );
 
-  const stepsData = data.steps;
-  const rawSleepData = data.sleep;
+  const hasSteps = dataSources.steps.length > 0;
+  const hasSleep = dataSources.sleep.length > 0;
+  const hasWeight = dataSources.weight.length > 0;
+
+  const stepsData = dataSources.steps;
+  const rawSleepData = dataSources.sleep;
   const analysisSleepData = useMemo(
     () => (excludeNaps ? rawSleepData.filter((d) => !d.isNap) : rawSleepData),
     [rawSleepData, excludeNaps],
   );
-  const weightData = data.weight;
-  const bpData = data.bp;
-  const heightData = data.height;
-  const spo2Data = data.spo2;
-  const activitiesData = data.activities;
+  const weightData = dataSources.weight;
+  const bpData = dataSources.bp;
+  const heightData = dataSources.height;
+  const spo2Data = dataSources.spo2;
+  const activitiesData = dataSources.activities;
 
   const weekendDaySet = useMemo(() => new Set(weekendDays), [weekendDays]);
 
   const rangeStepsData = useMemo(
     () =>
-      filterByRange(
+      filterRangeData(
         stepsData,
         (item) => new Date(item.date),
         range,
@@ -70,7 +130,7 @@ export function useDashboardMetrics(
 
   const rangeSleepData = useMemo(
     () =>
-      filterByRange(
+      filterRangeData(
         analysisSleepData,
         (item) => new Date(item.start || item.date),
         range,
@@ -81,7 +141,7 @@ export function useDashboardMetrics(
 
   const rangeWeightData = useMemo(
     () =>
-      filterByRange(
+      filterRangeData(
         weightData,
         (item) => new Date(item.date),
         range,
@@ -90,11 +150,7 @@ export function useDashboardMetrics(
     [customRange, range, weightData],
   );
 
-  const hasSeasonData =
-    rangeStepsData.length > 0 ||
-    rangeSleepData.length > 0 ||
-    rangeWeightData.length > 0;
-  const hasDayTypeData =
+  const hasRangeData =
     rangeStepsData.length > 0 ||
     rangeSleepData.length > 0 ||
     rangeWeightData.length > 0;
@@ -172,16 +228,16 @@ export function useDashboardMetrics(
   const allEventStats = useMemo(
     () =>
       calculateEventStats(
-        data.events || [],
+        dataSources.events,
         stepsData,
         analysisSleepData,
         weightData,
         sleepCountingMode,
         excludeWeekends,
-        weekendDaySet || new Set(),
+        weekendDaySet,
       ),
     [
-      data.events,
+      dataSources.events,
       analysisSleepData,
       stepsData,
       weightData,
@@ -242,8 +298,8 @@ export function useDashboardMetrics(
     rangeSleepDataProcessed,
     allSleepDataProcessed,
     rangeWeightData,
-    hasSeasonData,
-    hasDayTypeData,
+    hasSeasonData: hasRangeData,
+    hasDayTypeData: hasRangeData,
     overview,
     doubleTrackerStats,
     allEventStats,
