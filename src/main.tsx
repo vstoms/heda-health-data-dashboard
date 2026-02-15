@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { HelmetProvider } from "react-helmet-async";
 import App from "@/App.tsx";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "@/i18n";
@@ -13,10 +12,8 @@ if (!rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <HelmetProvider>
-      <ThemeProvider defaultTheme="system" storageKey="withings-theme">
-        <App />
-      </ThemeProvider>
-    </HelmetProvider>
+    <ThemeProvider defaultTheme="system" storageKey="withings-theme">
+      <App />
+    </ThemeProvider>
   </React.StrictMode>,
 );
