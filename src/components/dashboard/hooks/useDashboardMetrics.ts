@@ -54,7 +54,9 @@ export interface DashboardMetricsResult {
   hasSeasonData: boolean;
   hasDayTypeData: boolean;
   overview: OverviewStats;
-  doubleTrackerStats: ReturnType<typeof calculateSleepStats>["doubleTrackerStats"];
+  doubleTrackerStats: ReturnType<
+    typeof calculateSleepStats
+  >["doubleTrackerStats"];
   allEventStats: ReturnType<typeof calculateEventStats>;
   seasonStats: ReturnType<typeof calculateSeasonStats>;
   dayTypeStats: ReturnType<typeof calculateDayTypeStats>;

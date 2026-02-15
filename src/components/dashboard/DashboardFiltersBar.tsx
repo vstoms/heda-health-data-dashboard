@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { FADE_IN_VARIANTS } from "@/lib/animations";
 import { rollingAverageOptions } from "@/components/dashboard/constants";
 import { toInputDate } from "@/components/dashboard/helpers";
 import type { DateBounds, DateRangeWindow } from "@/components/dashboard/types";
@@ -15,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select";
+import { FADE_IN_VARIANTS } from "@/lib/animations";
 import type { DateRangeOption } from "@/lib/constants";
 import { DATE_RANGE_OPTIONS } from "@/lib/time";
 import { cn } from "@/lib/utils";

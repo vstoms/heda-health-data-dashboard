@@ -36,7 +36,10 @@ const computeCircularDiffSeconds = (a: number, b: number): number => {
   return diff;
 };
 
-const computeQuartile = (sortedValues: number[], percentile: number): number => {
+const computeQuartile = (
+  sortedValues: number[],
+  percentile: number,
+): number => {
   if (sortedValues.length === 0) return 0;
   const index = (sortedValues.length - 1) * percentile;
   const lower = Math.floor(index);
@@ -46,7 +49,9 @@ const computeQuartile = (sortedValues: number[], percentile: number): number => 
   return sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight;
 };
 
-const computeIqrBounds = (values: number[]): { low: number; high: number } | null => {
+const computeIqrBounds = (
+  values: number[],
+): { low: number; high: number } | null => {
   if (values.length < 4) return null;
   const sorted = [...values].sort((a, b) => a - b);
   const q1 = computeQuartile(sorted, 0.25);
@@ -237,9 +242,11 @@ export function DataQualityPanel({ sleep }: DataQualityPanelProps) {
         const trackerStartTs = new Date(tracker.start).getTime();
         const trackerEndTs = new Date(tracker.end).getTime();
         const overlapPct =
-          overlapRatio(matStartTs, matEndTs, trackerStartTs, trackerEndTs) * 100;
+          overlapRatio(matStartTs, matEndTs, trackerStartTs, trackerEndTs) *
+          100;
 
-        const matEfficiency = matTimeInBed > 0 ? mat.duration / matTimeInBed : null;
+        const matEfficiency =
+          matTimeInBed > 0 ? mat.duration / matTimeInBed : null;
         const trackerEfficiency =
           trackerTimeInBed > 0 ? tracker.duration / trackerTimeInBed : null;
         const efficiencyDiffPct =
@@ -447,7 +454,10 @@ export function DataQualityPanel({ sleep }: DataQualityPanelProps) {
                           {t("dashboard.quality.durationGap", "Duration Gap")}
                         </TableHead>
                         <TableHead className="text-xs">
-                          {t("dashboard.quality.timeInBedGap", "Time-In-Bed Gap")}
+                          {t(
+                            "dashboard.quality.timeInBedGap",
+                            "Time-In-Bed Gap",
+                          )}
                         </TableHead>
                         <TableHead className="text-xs">
                           {t("dashboard.quality.timingDiff", "Timing Diff")}
@@ -517,7 +527,10 @@ export function DataQualityPanel({ sleep }: DataQualityPanelProps) {
                                 <span className="ml-1 text-muted-foreground font-normal">
                                   ({t("dashboard.quality.matLabel", "Mat")}:{" "}
                                   {formatTimeOfDay(diff.matAsleep)} /{" "}
-                                  {t("dashboard.quality.trackerLabel", "Tracker")}
+                                  {t(
+                                    "dashboard.quality.trackerLabel",
+                                    "Tracker",
+                                  )}
                                   : {formatTimeOfDay(diff.trackerAsleep)})
                                 </span>
                               </div>
@@ -535,7 +548,10 @@ export function DataQualityPanel({ sleep }: DataQualityPanelProps) {
                                 <span className="ml-1 text-muted-foreground font-normal">
                                   ({t("dashboard.quality.matLabel", "Mat")}:{" "}
                                   {formatTimeOfDay(diff.matWake)} /{" "}
-                                  {t("dashboard.quality.trackerLabel", "Tracker")}
+                                  {t(
+                                    "dashboard.quality.trackerLabel",
+                                    "Tracker",
+                                  )}
                                   : {formatTimeOfDay(diff.trackerWake)})
                                 </span>
                               </div>

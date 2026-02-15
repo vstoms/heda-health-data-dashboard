@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ChangeEvent } from "react";
+import { type ChangeEvent, useMemo, useRef, useState } from "react";
 import { toInputDate } from "@/components/dashboard/helpers";
 import type { DateRangeWindow } from "@/components/dashboard/types";
 import type { DateRangeOption } from "@/lib/constants";
@@ -42,7 +42,9 @@ export function useDashboardInteractions({
     if (event.type !== "range") return;
     const [sy, sm, sd] = event.startDate.split("-").map(Number);
     const start = new Date(sy, sm - 1, sd);
-    const [ey, em, ed] = (event.endDate || event.startDate).split("-").map(Number);
+    const [ey, em, ed] = (event.endDate || event.startDate)
+      .split("-")
+      .map(Number);
     const end = new Date(ey, em - 1, ed);
     normalizeCustomRange(start, end);
   };

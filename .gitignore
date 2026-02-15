@@ -37,3 +37,4 @@ coverage/
 # Misc
 *.orig
 public/.htaccess
+rules.md

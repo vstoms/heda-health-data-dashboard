@@ -214,15 +214,21 @@ export async function parseSleepData(zip: JSZip): Promise<SleepData[]> {
         hrAverage: toNonNegativeInt(
           pickFirstValue(row, ["Average heart rate", "hrAverage"]),
         ),
-        hrMin: toNonNegativeInt(pickFirstValue(row, ["Heart rate (min)", "hrMin"])),
-        hrMax: toNonNegativeInt(pickFirstValue(row, ["Heart rate (max)", "hrMax"])),
+        hrMin: toNonNegativeInt(
+          pickFirstValue(row, ["Heart rate (min)", "hrMin"]),
+        ),
+        hrMax: toNonNegativeInt(
+          pickFirstValue(row, ["Heart rate (max)", "hrMax"]),
+        ),
         durationToSleep: toNonNegativeInt(
           pickFirstValue(row, ["Duration to sleep (s)", "durationToSleep"]),
         ),
         durationToWakeUp: toNonNegativeInt(
           pickFirstValue(row, ["Duration to wake up (s)", "durationToWakeUp"]),
         ),
-        snoring: toNonNegativeInt(pickFirstValue(row, ["Snoring (s)", "snoring"])),
+        snoring: toNonNegativeInt(
+          pickFirstValue(row, ["Snoring (s)", "snoring"]),
+        ),
         snoringEpisodes: toNonNegativeInt(
           pickFirstValue(row, ["Snoring episodes", "snoringEpisodes"]),
         ),

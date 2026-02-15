@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dashboard } from "@/components/Dashboard";
 import { LanguageSwitcher } from "@/components/dashboard/LanguageSwitcher";

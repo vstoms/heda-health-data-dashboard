@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StepsChart } from "@/components/charts/activity/StepsChart";
 import { SleepChart } from "@/components/charts/sleep/SleepChart";
+import { SleepDebtCard } from "@/components/charts/sleep/SleepDebtCard";
 import { WeightChart } from "@/components/charts/weight/WeightChart";
 import { DataBrowser } from "@/components/dashboard/DataBrowser";
 import { SleepSettings } from "@/components/dashboard/SleepSettings";
@@ -98,7 +99,9 @@ export function DashboardTabs({
   );
   const [activeTab, setActiveTab] = useState(tabOrder[0]);
   const [tabDirection, setTabDirection] = useState(0);
-  const resolvedActiveTab = tabOrder.includes(activeTab) ? activeTab : tabOrder[0];
+  const resolvedActiveTab = tabOrder.includes(activeTab)
+    ? activeTab
+    : tabOrder[0];
 
   const handleTabChange = useCallback(
     (nextTab: string) => {
@@ -153,6 +156,7 @@ export function DashboardTabs({
             sleepCountingMode={sleepCountingMode}
             onSleepCountingModeChange={onSleepCountingModeChange}
           />
+          <SleepDebtCard sleepData={allSleepDataProcessed} className="mb-6" />
           <SleepChart
             data={allSleepDataProcessed}
             events={events}
@@ -255,7 +259,11 @@ export function DashboardTabs({
   );
 
   return (
-    <Tabs value={resolvedActiveTab} onValueChange={handleTabChange} className="w-full">
+    <Tabs
+      value={resolvedActiveTab}
+      onValueChange={handleTabChange}
+      className="w-full"
+    >
       <motion.div
         initial={shouldReduceMotion ? false : { opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}

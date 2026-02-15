@@ -17,7 +17,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import {
   Table,
   TableBody,
@@ -26,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { formatNumber, formatSleepDuration } from "@/lib/utils";
 import { exportToExcel } from "@/services/exportService";
 import type {

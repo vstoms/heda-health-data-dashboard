@@ -433,5 +433,30 @@
     "summer": "Été",
     "autumn": "Automne",
     "winter": "Hiver"
+  },
+  "sleepDebt": {
+    "title": "Dette de sommeil",
+    "description": "Déficit ou surplus cumulé de sommeil",
+    "debt": "Dette de sommeil",
+    "surplus": "Surplus de sommeil",
+    "balanced": "Équilibré",
+    "goal": "Objectif",
+    "avgSleep": "Moy",
+    "nightsBelow": "Sous l'objectif",
+    "nightsAbove": "Atteint/Dépassé",
+    "deficitStreak": "{{count}} nuits sous l'objectif",
+    "deficitStreak_one": "{{count}} nuit sous l'objectif",
+    "surplusStreak": "{{count}} nuits à/au-dessus de l'objectif",
+    "surplusStreak_one": "{{count}} nuit à/au-dessus de l'objectif",
+    "recovery": "Récupération",
+    "recoveryNights": "{{count}} nuits avec sommeil objectif",
+    "recoveryNights_one": "{{count}} nuit avec sommeil objectif",
+    "or": "ou",
+    "withExtra": "avec +1h supplémentaire",
+    "settings": {
+      "title": "Objectif de sommeil",
+      "description": "Définissez votre durée de sommeil cible par nuit",
+      "hours": "Heures"
+    }
   }
 }

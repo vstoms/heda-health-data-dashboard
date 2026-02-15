@@ -433,5 +433,30 @@
     "summer": "Summer",
     "autumn": "Autumn",
     "winter": "Winter"
+  },
+  "sleepDebt": {
+    "title": "Sleep Debt",
+    "description": "Cumulative sleep deficit or surplus",
+    "debt": "Sleep debt",
+    "surplus": "Sleep surplus",
+    "balanced": "Balanced",
+    "goal": "Goal",
+    "avgSleep": "Avg",
+    "nightsBelow": "Below Goal",
+    "nightsAbove": "At/Above Goal",
+    "deficitStreak": "{{count}} nights below goal",
+    "deficitStreak_one": "{{count}} night below goal",
+    "surplusStreak": "{{count}} nights at/above goal",
+    "surplusStreak_one": "{{count}} night at/above goal",
+    "recovery": "Recovery",
+    "recoveryNights": "{{count}} nights at goal sleep",
+    "recoveryNights_one": "{{count}} night at goal sleep",
+    "or": "or",
+    "withExtra": "with +1h extra",
+    "settings": {
+      "title": "Sleep Goal",
+      "description": "Set your target sleep duration per night",
+      "hours": "Hours"
+    }
   }
 }
