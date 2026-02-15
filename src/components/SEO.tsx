@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 export function SEO() {
@@ -10,26 +11,27 @@ export function SEO() {
   });
   const siteUrl = "https://heda.tosc.fr/";
 
-  return (
-    <>
-      <title>{`${title} | Your Health Trends`}</title>
-      <meta name="title" content={`${title} | Your Health Trends`} />
-      <meta name="description" content={description} />
-      <meta name="keywords" content={keywords} />
+  useEffect(() => {
+    document.title = `${title} | Your Health Trends`;
 
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={siteUrl} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta
-        property="og:locale"
-        content={i18n.language === "fr" ? "fr_FR" : "en_US"}
-      />
+    const updateMeta = (selector: string, content: string) => {
+      const element = document.querySelector(selector);
+      if (element) {
+        element.setAttribute('content', content);
+      }
+    };
 
-      <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:url" content={siteUrl} />
-      <meta property="twitter:title" content={title} />
-      <meta property="twitter:description" content={description} />
-    </>
-  );
+    updateMeta('meta[name="title"]', `${title} | Your Health Trends`);
+    updateMeta('meta[name="description"]', description);
+    updateMeta('meta[name="keywords"]', keywords);
+    updateMeta('meta[property="og:title"]', title);
+    updateMeta('meta[property="og:description"]', description);
+    updateMeta('meta[property="og:url"]', siteUrl);
+    updateMeta('meta[property="og:locale"]', i18n.language === "fr" ? "fr_FR" : "en_US");
+    updateMeta('meta[property="twitter:title"]', title);
+    updateMeta('meta[property="twitter:description"]', description);
+    updateMeta('meta[property="twitter:url"]', siteUrl);
+  }, [title, description, keywords, i18n.language, siteUrl]);
+
+  return null;
 }
