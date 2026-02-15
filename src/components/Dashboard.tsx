@@ -152,6 +152,8 @@ export function Dashboard({
             onSleepCountingModeChange={setSleepCountingMode}
             onRangeChange={onRangeChange}
             onTriggerReimport={onTriggerReimport}
+            dataBounds={dataBounds}
+            healthData={data}
           />
         </MotionWrapper>
 

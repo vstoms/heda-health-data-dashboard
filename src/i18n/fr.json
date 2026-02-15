@@ -491,5 +491,73 @@
     "generatedAt": "Généré",
     "generatedBy": "Généré par Heda - Tableau de bord de données de santé",
     "openReport": "Rapport de santé"
+  },
+  "comparison": {
+    "title": "Comparaison de périodes",
+    "subtitle": "Comparez les métriques de santé entre deux périodes",
+    "periodA": "Période A",
+    "periodB": "Période B",
+    "periodSelector": {
+      "title": "Sélectionner les périodes à comparer",
+      "preset": "Préréglage rapide",
+      "selectPreset": "Choisir un préréglage...",
+      "configure": "Configurer",
+      "dataRange": "Plage de données disponible"
+    },
+    "presets": {
+      "janFeb": "Janvier vs Février",
+      "febMar": "Février vs Mars",
+      "marApr": "Mars vs Avril",
+      "aprMay": "Avril vs Mai",
+      "mayJun": "Mai vs Juin",
+      "junJul": "Juin vs Juillet",
+      "julAug": "Juillet vs Août",
+      "augSep": "Août vs Septembre",
+      "sepOct": "Septembre vs Octobre",
+      "octNov": "Octobre vs Novembre",
+      "novDec": "Novembre vs Décembre",
+      "lastVsThisMonth": "Mois dernier vs Ce mois",
+      "last3VsPrev3": "3 derniers mois vs 3 mois précédents",
+      "custom": "Périodes personnalisées"
+    },
+    "metrics": {
+      "avgSleep": "Sommeil moyen",
+      "avgSteps": "Pas moyens",
+      "sleepScore": "Score de sommeil",
+      "avgWeight": "Poids moyen"
+    },
+    "charts": {
+      "metricsComparison": "Comparaison des métriques",
+      "sleepComposition": "Comparaison de la composition du sommeil",
+      "percentChange": "Variation en pourcentage",
+      "percentChangeNote": "Les valeurs positives indiquent que {{periodB}} est supérieur à {{periodA}}"
+    },
+    "table": {
+      "metric": "Métrique",
+      "delta": "Delta",
+      "percentChange": "% Changement",
+      "totalSteps": "Total pas",
+      "avgSteps": "Pas moyens",
+      "daysWithSteps": "Jours avec pas",
+      "avgSleepDuration": "Durée sommeil moyenne",
+      "avgDeepSleep": "Sommeil profond moyen",
+      "avgLightSleep": "Sommeil léger moyen",
+      "avgRemSleep": "Sommeil REM moyen",
+      "avgAwake": "Temps éveillé moyen",
+      "avgSleepScore": "Score sommeil moyen",
+      "sleepNights": "Nuits de sommeil",
+      "avgWeight": "Poids moyen",
+      "weightChange": "Variation de poids",
+      "weightEntries": "Entrées de poids"
+    },
+    "sections": {
+      "steps": "Pas",
+      "sleep": "Sommeil",
+      "weight": "Poids",
+      "summary": "Résumé",
+      "sleepTrend": "Tendance sommeil",
+      "stepsTrend": "Tendance pas",
+      "weightTrend": "Tendance poids"
+    }
   }
 }

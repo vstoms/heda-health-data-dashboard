@@ -1,11 +1,12 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Activity, Database, Moon, Scale } from "lucide-react";
+import { Activity, ArrowLeftRight, Database, Moon, Scale } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StepsChart } from "@/components/charts/activity/StepsChart";
 import { SleepChart } from "@/components/charts/sleep/SleepChart";
 import { SleepDebtCard } from "@/components/charts/sleep/SleepDebtCard";
 import { WeightChart } from "@/components/charts/weight/WeightChart";
+import { ComparisonMode } from "@/components/comparison/ComparisonMode";
 import { DataBrowser } from "@/components/dashboard/DataBrowser";
 import { SleepSettings } from "@/components/dashboard/SleepSettings";
 import type {
@@ -19,6 +20,7 @@ import type { DateRangeOption } from "@/lib/constants";
 import type {
   ActivityData,
   BloodPressureData,
+  HealthData,
   HeightData,
   PatternEvent,
   SleepData,
@@ -55,6 +57,8 @@ interface DashboardTabsProps {
   onSleepCountingModeChange: (value: SleepCountingMode) => void;
   onRangeChange: (range: DateRangeWindow) => void;
   onTriggerReimport: () => void;
+  dataBounds: { min: Date; max: Date } | null;
+  healthData: HealthData;
 }
 
 export function DashboardTabs({
@@ -85,6 +89,8 @@ export function DashboardTabs({
   onSleepCountingModeChange,
   onRangeChange,
   onTriggerReimport,
+  dataBounds,
+  healthData,
 }: DashboardTabsProps) {
   const { t } = useTranslation();
   const shouldReduceMotion = useReducedMotion();
@@ -93,6 +99,7 @@ export function DashboardTabs({
       ...(hasSteps ? ["activity"] : []),
       ...(hasSleep ? ["sleep"] : []),
       ...(hasWeight ? ["body"] : []),
+      "compare",
       "explorer",
     ],
     [hasSleep, hasSteps, hasWeight],
@@ -120,7 +127,7 @@ export function DashboardTabs({
   );
 
   const visibleTabsCount =
-    (hasSteps ? 1 : 0) + (hasSleep ? 1 : 0) + (hasWeight ? 1 : 0) + 1; // +1 for explorer
+    (hasSteps ? 1 : 0) + (hasSleep ? 1 : 0) + (hasWeight ? 1 : 0) + 2; // +2 for compare and explorer
 
   const renderActiveContent = useCallback(() => {
     if (resolvedActiveTab === "activity") {
@@ -197,6 +204,15 @@ export function DashboardTabs({
       );
     }
 
+    if (resolvedActiveTab === "compare") {
+      return (
+        <ComparisonMode
+          data={healthData}
+          dataBounds={dataBounds}
+        />
+      );
+    }
+
     return (
       <DataBrowser
         sleep={allSleepData}
@@ -214,6 +230,7 @@ export function DashboardTabs({
     activitiesData,
     bpData,
     customRange,
+    dataBounds,
     doubleTrackerStats,
     events,
     excludeNaps,
@@ -221,6 +238,7 @@ export function DashboardTabs({
     hasSleep,
     hasSteps,
     hasWeight,
+    healthData,
     heightData,
     onExcludeNapsChange,
     onExcludeWeekendsChange,
@@ -293,6 +311,10 @@ export function DashboardTabs({
               {t("dashboard.tabs.body")}
             </TabsTrigger>
           )}
+          <TabsTrigger value="compare">
+            <ArrowLeftRight className="w-4 h-4 mr-2" />
+            {t("dashboard.tabs.compare", "Compare")}
+          </TabsTrigger>
           <TabsTrigger value="explorer">
             <Database className="w-4 h-4 mr-2" />
             {t("dashboard.tabs.data", "Data")}
