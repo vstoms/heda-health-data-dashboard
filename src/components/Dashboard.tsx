@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DashboardEventsModal } from "@/components/dashboard/DashboardEventsModal";
 import { DashboardFiltersBar } from "@/components/dashboard/DashboardFiltersBar";
@@ -13,6 +14,7 @@ import { useDashboardInteractions } from "@/components/dashboard/hooks/useDashbo
 import { useDashboardMetrics } from "@/components/dashboard/hooks/useDashboardMetrics";
 import { useDataBounds } from "@/components/dashboard/hooks/useDataBounds";
 import { MotionWrapper, StaggerContainer } from "@/components/ui/MotionWrapper";
+import { HealthReportModal } from "@/components/reports/HealthReportModal";
 import type { HealthData, PatternEvent } from "@/types";
 
 interface DashboardProps {
@@ -29,6 +31,7 @@ export function Dashboard({
   onReimportData,
 }: DashboardProps) {
   const { t } = useTranslation();
+  const [reportOpen, setReportOpen] = useState(false);
   const dataBounds = useDataBounds(data);
   const {
     range,
@@ -83,6 +86,7 @@ export function Dashboard({
           title={t("dashboard.header.title")}
           subtitle={t("dashboard.header.subtitle")}
           onOpenEvents={() => setEventsOpen(true)}
+          onOpenReport={() => setReportOpen(true)}
         />
       </MotionWrapper>
 
@@ -183,6 +187,17 @@ export function Dashboard({
         onClose={() => setEventsOpen(false)}
         events={events}
         onEventsUpdate={onEventsUpdate}
+      />
+
+      <HealthReportModal
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        data={data}
+        events={events}
+        excludeNaps={excludeNaps}
+        excludeWeekends={excludeWeekends}
+        weekendDays={weekendDays}
+        sleepCountingMode={sleepCountingMode}
       />
     </div>
   );

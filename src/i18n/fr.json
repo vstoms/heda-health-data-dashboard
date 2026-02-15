@@ -458,5 +458,38 @@
       "description": "Définissez votre durée de sommeil cible par nuit",
       "hours": "Heures"
     }
+  },
+  "reports": {
+    "title": "Rapport de santé",
+    "period": "Période",
+    "weekly": "Hebdomadaire",
+    "monthly": "Mensuel",
+    "summary": "Résumé",
+    "sleepChanges": "Changements de sommeil",
+    "activityChanges": "Changements d'activité",
+    "bodyChanges": "Changements corporels",
+    "duration": "Durée",
+    "deepSleep": "Sommeil profond",
+    "remSleep": "Sommeil REM",
+    "sleepScore": "Score",
+    "avgSteps": "Pas moyens",
+    "distance": "Distance",
+    "calories": "Calories",
+    "weight": "Poids",
+    "fatMass": "Masse grasse",
+    "muscleMass": "Masse musculaire",
+    "highlights": "Meilleures et pires journées",
+    "bestDays": "Meilleures journées",
+    "daysToImprove": "Journées à améliorer",
+    "eventImpacts": "Impacts des événements",
+    "noData": "Aucune donnée disponible pour cette période",
+    "exportHtml": "HTML",
+    "exportPdf": "PDF",
+    "share": "Partager",
+    "shareTitle": "Rapport de santé",
+    "metricChanges": "Changements de métriques vs. période précédente",
+    "generatedAt": "Généré",
+    "generatedBy": "Généré par Heda - Tableau de bord de données de santé",
+    "openReport": "Rapport de santé"
   }
 }

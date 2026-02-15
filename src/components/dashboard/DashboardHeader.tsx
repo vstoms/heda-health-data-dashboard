@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Calendar } from "lucide-react";
+import { Calendar, FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/dashboard/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -10,12 +10,14 @@ interface DashboardHeaderProps {
   title: string;
   subtitle: string;
   onOpenEvents: () => void;
+  onOpenReport: () => void;
 }
 
 export function DashboardHeader({
   title,
   subtitle,
   onOpenEvents,
+  onOpenReport,
 }: DashboardHeaderProps) {
   const { t } = useTranslation();
 
@@ -55,6 +57,10 @@ export function DashboardHeader({
       >
         <ThemeToggle />
         <LanguageSwitcher />
+        <Button variant="outline" onClick={onOpenReport}>
+          <FileText className="mr-2 h-4 w-4" />
+          {t("reports.openReport")}
+        </Button>
         <Button variant="outline" onClick={onOpenEvents}>
           <Calendar className="mr-2 h-4 w-4" />
           {t("dashboard.header.manageEvents")}
