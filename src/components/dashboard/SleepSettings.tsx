@@ -106,7 +106,7 @@ export function SleepSettings({
 
               <div
                 className={cn(
-                  "flex items-center gap-1 transition-all duration-500",
+                  "flex items-center gap-1.5 transition-all duration-500",
                   !excludeWeekends &&
                     "opacity-30 grayscale pointer-events-none",
                 )}
@@ -127,7 +127,7 @@ export function SleepSettings({
                         )
                       }
                       className={cn(
-                        "h-8 w-8 p-0 text-[10px] font-bold rounded-lg transition-transform active:scale-95",
+                        "h-10 w-10 p-0 text-xs font-bold rounded-lg transition-transform active:scale-95",
                         isSelected
                           ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm ring-2 ring-indigo-500/20"
                           : "hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-muted-foreground",

@@ -81,11 +81,11 @@ export function DashboardGuidanceCard() {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-2 top-2 h-7 w-7 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute right-2 top-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={handleDismiss}
               title={t("common.close")}
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </motion.div>

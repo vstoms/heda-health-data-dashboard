@@ -499,7 +499,7 @@ export function DataBrowser({
                     ({t("common.total", "Total")}: {sortedData.length})
                   </span>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-2">
                   <Button
                     variant="outline"
                     size="icon"

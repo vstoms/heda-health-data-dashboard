@@ -73,7 +73,7 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
           <DialogTitle>{title}</DialogTitle>
           <DialogPrimitive.Close
-            className="rounded-md p-1 hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+            className="rounded-md p-3 hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
             aria-label={t("common.close")}
           >
             <X className="h-5 w-5" />

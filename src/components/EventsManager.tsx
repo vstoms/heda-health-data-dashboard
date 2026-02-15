@@ -327,7 +327,7 @@ export function EventsManager({ events, onEventsChange }: EventsManagerProps) {
               <div className="flex items-center gap-2 text-sm">
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="icon"
                   onClick={() => handleEdit(event)}
                   title={t("events.actions.edit")}
                 >
@@ -335,7 +335,7 @@ export function EventsManager({ events, onEventsChange }: EventsManagerProps) {
                 </Button>
                 <Button
                   variant="destructive"
-                  size="sm"
+                  size="icon"
                   onClick={() => handleDelete(event.id)}
                   title={t("events.actions.delete")}
                 >
