@@ -1,6 +1,10 @@
 import ReactECharts from "echarts-for-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  ChartAccessibility,
+  getChartAriaLabel,
+} from "@/components/charts/ChartAccessibility";
 import { useTheme } from "@/components/ThemeProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { commonTooltipConfig } from "@/lib/chart-utils";
@@ -259,51 +263,90 @@ export function ComparisonCharts({ result }: ComparisonChartsProps) {
     };
   }, [result, labelColor, mutedColor, theme, t]);
 
+  const metricsTitle = t("comparison.charts.metricsComparison");
+  const sleepCompositionTitle = t("comparison.charts.sleepComposition");
+  const percentChangeTitle = t("comparison.charts.percentChange");
+  const percentChangeNote = t("comparison.charts.percentChangeNote", {
+    periodA: periodALabel,
+    periodB: periodBLabel,
+  });
+
   return (
     <div className="space-y-6">
       {/* Main metrics comparison */}
       <Card>
         <CardHeader>
-          <CardTitle>{t("comparison.charts.metricsComparison")}</CardTitle>
+          <CardTitle>{metricsTitle}</CardTitle>
         </CardHeader>
         <CardContent>
-          <ReactECharts
-            option={barChartOption}
-            style={{ height: "300px" }}
-            opts={{ renderer: "svg" }}
+          <ChartAccessibility
+            title={metricsTitle}
+            description={t("comparison.charts.metricsAccessibilityDesc", {
+              defaultValue: `Comparison of key health metrics between ${periodALabel} and ${periodBLabel}.`,
+              periodA: periodALabel,
+              periodB: periodBLabel,
+            })}
           />
+          <div role="img" aria-label={getChartAriaLabel(metricsTitle)}>
+            <ReactECharts
+              option={barChartOption}
+              style={{ height: "300px" }}
+              opts={{ renderer: "svg" }}
+            />
+          </div>
         </CardContent>
       </Card>
-      
+
       {/* Sleep composition comparison */}
       {sleepCompositionOption && (
         <Card>
           <CardHeader>
-            <CardTitle>{t("comparison.charts.sleepComposition")}</CardTitle>
+            <CardTitle>{sleepCompositionTitle}</CardTitle>
           </CardHeader>
           <CardContent>
-            <ReactECharts
-              option={sleepCompositionOption}
-              style={{ height: "300px" }}
-              opts={{ renderer: "svg" }}
+            <ChartAccessibility
+              title={sleepCompositionTitle}
+              description={t("comparison.charts.sleepCompositionAccessibilityDesc", {
+                defaultValue: `Comparison of sleep stages (light, deep, REM) between ${periodALabel} and ${periodBLabel}.`,
+                periodA: periodALabel,
+                periodB: periodBLabel,
+              })}
             />
+            <div role="img" aria-label={getChartAriaLabel(sleepCompositionTitle)}>
+              <ReactECharts
+                option={sleepCompositionOption}
+                style={{ height: "300px" }}
+                opts={{ renderer: "svg" }}
+              />
+            </div>
           </CardContent>
         </Card>
       )}
-      
+
       {/* Delta chart */}
       <Card>
         <CardHeader>
-          <CardTitle>{t("comparison.charts.percentChange")}</CardTitle>
+          <CardTitle>{percentChangeTitle}</CardTitle>
         </CardHeader>
         <CardContent>
-          <ReactECharts
-            option={deltaChartOption}
-            style={{ height: "300px" }}
-            opts={{ renderer: "svg" }}
+          <ChartAccessibility
+            title={percentChangeTitle}
+            description={t("comparison.charts.percentChangeAccessibilityDesc", {
+              defaultValue: `Percentage change in metrics from ${periodALabel} to ${periodBLabel}.`,
+              periodA: periodALabel,
+              periodB: periodBLabel,
+            })}
+            summary={percentChangeNote}
           />
+          <div role="img" aria-label={getChartAriaLabel(percentChangeTitle)}>
+            <ReactECharts
+              option={deltaChartOption}
+              style={{ height: "300px" }}
+              opts={{ renderer: "svg" }}
+            />
+          </div>
           <p className="text-xs text-muted-foreground mt-2">
-            {t("comparison.charts.percentChangeNote", { periodA: periodALabel, periodB: periodBLabel })}
+            {percentChangeNote}
           </p>
         </CardContent>
       </Card>

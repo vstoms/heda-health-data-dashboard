@@ -2,6 +2,10 @@ import ReactECharts from "echarts-for-react";
 import i18next from "i18next";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  ChartAccessibility,
+  getChartAriaLabel,
+} from "@/components/charts/ChartAccessibility";
 import { useTheme } from "@/components/ThemeProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { commonTooltipConfig, createChartTooltip } from "@/lib/chart-utils";
@@ -418,35 +422,46 @@ export function StepsChart({
     setHoverWindow(null);
   };
 
+  const chartTitle = t("charts.steps.header", { rollingLabel });
+  const summaryText = t("charts.steps.summary", {
+    rollingLabel,
+    avg: formatNumber(avgRolling),
+    stepsPerDay: t("units.stepsPerDay"),
+    totalLabel: t("common.total"),
+    total: formatNumber(totalSteps),
+    steps: t("units.steps"),
+  });
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("charts.steps.header", { rollingLabel })}</CardTitle>
-        <div className="text-sm text-muted-foreground">
-          {t("charts.steps.summary", {
-            rollingLabel,
-            avg: formatNumber(avgRolling),
-            stepsPerDay: t("units.stepsPerDay"),
-            totalLabel: t("common.total"),
-            total: formatNumber(totalSteps),
-            steps: t("units.steps"),
-          })}
-        </div>
+        <CardTitle>{chartTitle}</CardTitle>
+        <div className="text-sm text-muted-foreground">{summaryText}</div>
       </CardHeader>
       <CardContent>
-        <ReactECharts
-          opts={{ renderer: "svg" }}
-          className="bg-card"
-          option={option}
-          style={{ height: "400px" }}
-          theme={theme === "dark" ? "dark" : "light"}
-          onEvents={{
-            datazoom: handleDataZoom,
-            dataZoom: handleDataZoom,
-            updateAxisPointer: handleAxisPointer,
-            globalout: clearHoverWindow,
-          }}
+        <ChartAccessibility
+          title={chartTitle}
+          description={t("charts.steps.accessibilityDesc", {
+            defaultValue:
+              "This chart displays your daily step count over time with a rolling average line.",
+          })}
+          summary={summaryText}
         />
+        <div role="img" aria-label={getChartAriaLabel(chartTitle)}>
+          <ReactECharts
+            opts={{ renderer: "svg" }}
+            className="bg-card"
+            option={option}
+            style={{ height: "400px" }}
+            theme={theme === "dark" ? "dark" : "light"}
+            onEvents={{
+              datazoom: handleDataZoom,
+              dataZoom: handleDataZoom,
+              updateAxisPointer: handleAxisPointer,
+              globalout: clearHoverWindow,
+            }}
+          />
+        </div>
       </CardContent>
     </Card>
   );

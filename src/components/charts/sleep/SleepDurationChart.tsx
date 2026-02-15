@@ -1,6 +1,10 @@
 import type * as echarts from "echarts";
 import ReactECharts from "echarts-for-react";
 import { useTranslation } from "react-i18next";
+import {
+  ChartAccessibility,
+  getChartAriaLabel,
+} from "@/components/charts/ChartAccessibility";
 import { useTheme } from "@/components/ThemeProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { commonTooltipConfig, createChartTooltip } from "@/lib/chart-utils";
@@ -232,35 +236,44 @@ export function SleepDurationChart({
     }
   };
 
+  const chartTitle = t("charts.sleep.durationHeader", { rollingLabel });
+  const summaryText = t("charts.sleep.durationSummary", {
+    rollingLabel,
+    duration: formatSleepDuration(avgDurationSeconds),
+  });
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          {t("charts.sleep.durationHeader", { rollingLabel })}
-        </CardTitle>
-        <div className="text-sm text-muted-foreground">
-          {t("charts.sleep.durationSummary", {
-            rollingLabel,
-            duration: formatSleepDuration(avgDurationSeconds),
-          })}
-        </div>
+        <CardTitle>{chartTitle}</CardTitle>
+        <div className="text-sm text-muted-foreground">{summaryText}</div>
       </CardHeader>
       <CardContent>
-        <ReactECharts
-          opts={{ renderer: "svg" }}
-          className="bg-card"
-          option={option}
-          style={{ height: "400px" }}
-          theme={theme === "dark" ? "dark" : "light"}
-          onChartReady={(chart) => {
-            chart.group = "sleep-charts";
-            onChartReady?.(chart);
-          }}
-          onEvents={{
-            datazoom: handleDataZoom,
-            dataZoom: handleDataZoom,
-          }}
+        <ChartAccessibility
+          title={chartTitle}
+          description={t("charts.sleep.durationAccessibilityDesc", {
+            defaultValue:
+              "This chart shows your sleep duration over time with a rolling average.",
+          })}
+          summary={summaryText}
         />
+        <div role="img" aria-label={getChartAriaLabel(chartTitle)}>
+          <ReactECharts
+            opts={{ renderer: "svg" }}
+            className="bg-card"
+            option={option}
+            style={{ height: "400px" }}
+            theme={theme === "dark" ? "dark" : "light"}
+            onChartReady={(chart) => {
+              chart.group = "sleep-charts";
+              onChartReady?.(chart);
+            }}
+            onEvents={{
+              datazoom: handleDataZoom,
+              dataZoom: handleDataZoom,
+            }}
+          />
+        </div>
       </CardContent>
     </Card>
   );

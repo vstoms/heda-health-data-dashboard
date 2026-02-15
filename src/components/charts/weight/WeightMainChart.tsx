@@ -1,5 +1,9 @@
 import ReactECharts from "echarts-for-react";
 import { useTranslation } from "react-i18next";
+import {
+  ChartAccessibility,
+  getChartAriaLabel,
+} from "@/components/charts/ChartAccessibility";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { commonTooltipConfig, createChartTooltip } from "@/lib/chart-utils";
 import { formatDate } from "@/lib/utils";
@@ -204,28 +208,39 @@ export function WeightMainChart({
     ],
   };
 
+  const chartTitle = t("charts.weight.title");
+  const summaryText = t("charts.weight.summary", {
+    avg: avgWeight.toFixed(1),
+    min: minWeight.toFixed(1),
+    max: maxWeight.toFixed(1),
+    unit: t("units.kg"),
+  });
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("charts.weight.title")}</CardTitle>
-        <div className="text-sm text-muted-foreground">
-          {t("charts.weight.summary", {
-            avg: avgWeight.toFixed(1),
-            min: minWeight.toFixed(1),
-            max: maxWeight.toFixed(1),
-            unit: t("units.kg"),
-          })}
-        </div>
+        <CardTitle>{chartTitle}</CardTitle>
+        <div className="text-sm text-muted-foreground">{summaryText}</div>
       </CardHeader>
       <CardContent>
-        <ReactECharts
-          opts={{ renderer: "svg" }}
-          className="bg-card"
-          option={option}
-          style={{ height: "400px" }}
-          theme={theme === "dark" ? "dark" : "light"}
-          onEvents={{ datazoom: handleDataZoom, dataZoom: handleDataZoom }}
+        <ChartAccessibility
+          title={chartTitle}
+          description={t("charts.weight.accessibilityDesc", {
+            defaultValue:
+              "This chart shows your weight measurements over time with a trend line.",
+          })}
+          summary={summaryText}
         />
+        <div role="img" aria-label={getChartAriaLabel(chartTitle)}>
+          <ReactECharts
+            opts={{ renderer: "svg" }}
+            className="bg-card"
+            option={option}
+            style={{ height: "400px" }}
+            theme={theme === "dark" ? "dark" : "light"}
+            onEvents={{ datazoom: handleDataZoom, dataZoom: handleDataZoom }}
+          />
+        </div>
       </CardContent>
     </Card>
   );
