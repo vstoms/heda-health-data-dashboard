@@ -96,6 +96,14 @@ export interface EventImpact {
 }
 
 /**
+ * Daily data point for report charts
+ */
+export interface ReportDailyPoint {
+  date: string; // ISO date string
+  value: number | null;
+}
+
+/**
  * Complete report data structure
  */
 export interface HealthReport {
@@ -103,6 +111,13 @@ export interface HealthReport {
   period: ReportPeriod;
   currentRange: ReportDateRange;
   previousRange: ReportDateRange | null;
+
+  // Daily data for charts
+  dailyData: {
+    sleep: ReportDailyPoint[]; // seconds
+    steps: ReportDailyPoint[];
+    weight: ReportDailyPoint[]; // kg
+  };
 
   // Metric changes vs previous period
   changes: {

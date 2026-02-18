@@ -21,6 +21,7 @@ import type {
   EventImpact,
   HealthReport,
   MetricChange,
+  ReportDailyPoint,
   ReportDateRange,
   ReportOptions,
   ReportPeriod,
@@ -606,6 +607,86 @@ function generateSummary(
 }
 
 /**
+ * Build daily data points for charts within a date range
+ */
+function buildDailyData(
+  sleepData: SleepData[],
+  stepsData: StepData[],
+  weightData: WeightData[],
+  range: ReportDateRange,
+  excludeNaps: boolean,
+  sleepCountingMode: SleepCountingMode,
+): { sleep: ReportDailyPoint[]; steps: ReportDailyPoint[]; weight: ReportDailyPoint[] } {
+  const startDate = new Date(range.start);
+  const endDate = new Date(range.end);
+
+  // Build a list of all dates in the range
+  const dates: string[] = [];
+  const cursor = new Date(startDate);
+  while (cursor <= endDate) {
+    dates.push(cursor.toISOString().split("T")[0]);
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  // Sleep: group by date, pick the main session (non-nap preferred)
+  const sleepByDate = new Map<string, SleepData[]>();
+  for (const s of sleepData) {
+    const d = s.date;
+    if (d >= range.start && d <= range.end) {
+      if (!sleepByDate.has(d)) sleepByDate.set(d, []);
+      sleepByDate.get(d)!.push(s);
+    }
+  }
+
+  const sleepPoints: ReportDailyPoint[] = dates.map((date) => {
+    const sessions = sleepByDate.get(date) ?? [];
+    const mainSessions = excludeNaps ? sessions.filter((s) => !s.isNap) : sessions;
+    if (mainSessions.length === 0) return { date, value: null };
+
+    // Use the counting mode to pick the right duration
+    let totalDuration = 0;
+    let count = 0;
+    for (const s of mainSessions) {
+      let dur = s.duration;
+      if (sleepCountingMode === "mat-first") {
+        dur = s.deviceCategory === "bed" ? s.duration : (mainSessions.find((x) => x.deviceCategory === "bed")?.duration ?? s.duration);
+      } else if (sleepCountingMode === "tracker-first") {
+        dur = s.deviceCategory === "tracker" ? s.duration : (mainSessions.find((x) => x.deviceCategory === "tracker")?.duration ?? s.duration);
+      }
+      totalDuration += dur;
+      count++;
+    }
+    return { date, value: count > 0 ? totalDuration / count : null };
+  });
+
+  // Steps: group by date
+  const stepsByDate = new Map<string, number>();
+  for (const s of stepsData) {
+    if (s.date >= range.start && s.date <= range.end) {
+      stepsByDate.set(s.date, (stepsByDate.get(s.date) ?? 0) + s.steps);
+    }
+  }
+  const stepsPoints: ReportDailyPoint[] = dates.map((date) => ({
+    date,
+    value: stepsByDate.has(date) ? stepsByDate.get(date)! : null,
+  }));
+
+  // Weight: pick the last measurement per day
+  const weightByDate = new Map<string, number>();
+  for (const w of weightData) {
+    if (w.date >= range.start && w.date <= range.end) {
+      weightByDate.set(w.date, w.weight);
+    }
+  }
+  const weightPoints: ReportDailyPoint[] = dates.map((date) => ({
+    date,
+    value: weightByDate.has(date) ? weightByDate.get(date)! : null,
+  }));
+
+  return { sleep: sleepPoints, steps: stepsPoints, weight: weightPoints };
+}
+
+/**
  * Main function to generate a health report
  */
 export function generateHealthReport(
@@ -725,12 +806,23 @@ export function generateHealthReport(
     sleepCountingMode,
   );
 
+  // Build daily data for charts
+  const dailyData = buildDailyData(
+    data.sleep,
+    data.steps,
+    data.weight,
+    ranges.current,
+    excludeNaps,
+    sleepCountingMode,
+  );
+
   // Build report object
   const report: Omit<HealthReport, "summary"> = {
     generatedAt: new Date().toISOString(),
     period,
     currentRange: ranges.current,
     previousRange: ranges.previous,
+    dailyData,
     changes,
     currentMetrics: {
       sleep: currentSleepMetrics,

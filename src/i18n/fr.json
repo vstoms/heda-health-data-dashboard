@@ -490,7 +490,13 @@
     "metricChanges": "Changements de métriques vs. période précédente",
     "generatedAt": "Généré",
     "generatedBy": "Généré par Heda - Tableau de bord de données de santé",
-    "openReport": "Rapport de santé"
+    "openReport": "Rapport de santé",
+    "charts": {
+      "title": "Graphiques",
+      "sleepDuration": "Durée du sommeil",
+      "dailySteps": "Pas quotidiens",
+      "weight": "Poids"
+    }
   },
   "comparison": {
     "title": "Comparaison de périodes",

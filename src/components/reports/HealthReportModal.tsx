@@ -16,6 +16,7 @@ import { generateHealthReport, getAvailableReportPeriods } from "@/services/repo
 import type { HealthMetrics, PatternEvent } from "@/types";
 import type { HealthReport, ReportPeriod } from "@/types/report";
 import { cn } from "@/lib/utils";
+import { ReportCharts } from "./ReportCharts";
 
 interface HealthReportModalProps {
   open: boolean;
@@ -304,6 +305,16 @@ export function HealthReportModal({
                 </Card>
               </div>
 
+              {/* Charts */}
+              <ReportCharts
+                sleep={report.dailyData.sleep}
+                steps={report.dailyData.steps}
+                weight={report.dailyData.weight}
+                avgSleepSeconds={report.currentMetrics.sleep.avgDuration}
+                avgSteps={report.currentMetrics.activity.avgSteps}
+                avgWeight={report.currentMetrics.body.avgWeight}
+              />
+
               {/* Best/Worst Days */}
               {report.highlights.length > 0 && (
                 <Card className="p-4">
@@ -518,6 +529,156 @@ function exportAsPdf(report: HealthReport, t: (key: string, options?: { defaultV
   }
 }
 
+/** Generate a simple SVG bar chart for export */
+function generateSvgBarChart(
+  points: Array<{ date: string; value: number | null }>,
+  color: string,
+  avgValue: number | null,
+  formatLabel: (v: number) => string,
+  formatDate: (d: string) => string,
+): string {
+  const W = 240;
+  const H = 120;
+  const padL = 36;
+  const padR = 8;
+  const padT = 8;
+  const padB = 28;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+
+  const values = points.map((p) => p.value).filter((v): v is number => v !== null);
+  if (values.length === 0) return `<svg width="${W}" height="${H}"><text x="${W / 2}" y="${H / 2}" text-anchor="middle" fill="#999" font-size="11">No data</text></svg>`;
+
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const range = maxVal - minVal || 1;
+
+  const barW = Math.max(2, (chartW / points.length) * 0.7);
+  const gap = chartW / points.length;
+
+  const toY = (v: number) => padT + chartH - ((v - minVal) / range) * chartH;
+
+  const bars = points
+    .map((p, i) => {
+      if (p.value === null) return "";
+      const x = padL + i * gap + gap / 2 - barW / 2;
+      const y = toY(p.value);
+      const h = padT + chartH - y;
+      return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(1, h).toFixed(1)}" fill="${color}" rx="1"/>`;
+    })
+    .join("");
+
+  // Avg line
+  const avgLine = avgValue != null
+    ? (() => {
+        const ay = toY(avgValue).toFixed(1);
+        return `<line x1="${padL}" y1="${ay}" x2="${W - padR}" y2="${ay}" stroke="${color}" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.8"/>
+        <text x="${W - padR - 2}" y="${(Number(ay) - 3).toFixed(1)}" text-anchor="end" fill="${color}" font-size="9">${formatLabel(avgValue)}</text>`;
+      })()
+    : "";
+
+  // Y axis labels (min/max)
+  const yLabels = `
+    <text x="${padL - 3}" y="${(padT + chartH).toFixed(1)}" text-anchor="end" fill="#999" font-size="9">${formatLabel(minVal)}</text>
+    <text x="${padL - 3}" y="${(padT + 8).toFixed(1)}" text-anchor="end" fill="#999" font-size="9">${formatLabel(maxVal)}</text>
+  `;
+
+  // X axis labels (first and last)
+  const xLabels = points.length > 0
+    ? `<text x="${(padL + gap / 2).toFixed(1)}" y="${H - 4}" text-anchor="middle" fill="#999" font-size="9">${formatDate(points[0].date)}</text>
+       <text x="${(padL + (points.length - 1) * gap + gap / 2).toFixed(1)}" y="${H - 4}" text-anchor="middle" fill="#999" font-size="9">${formatDate(points[points.length - 1].date)}</text>`
+    : "";
+
+  return `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+    <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + chartH}" stroke="#ddd" stroke-width="1"/>
+    <line x1="${padL}" y1="${padT + chartH}" x2="${W - padR}" y2="${padT + chartH}" stroke="#ddd" stroke-width="1"/>
+    ${bars}
+    ${avgLine}
+    ${yLabels}
+    ${xLabels}
+  </svg>`;
+}
+
+/** Generate a simple SVG line chart for export */
+function generateSvgLineChart(
+  points: Array<{ date: string; value: number | null }>,
+  color: string,
+  avgValue: number | null,
+  formatLabel: (v: number) => string,
+  formatDate: (d: string) => string,
+): string {
+  const W = 240;
+  const H = 120;
+  const padL = 40;
+  const padR = 8;
+  const padT = 8;
+  const padB = 28;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+
+  const validPoints = points.filter((p): p is { date: string; value: number } => p.value !== null);
+  if (validPoints.length === 0) return `<svg width="${W}" height="${H}"><text x="${W / 2}" y="${H / 2}" text-anchor="middle" fill="#999" font-size="11">No data</text></svg>`;
+
+  const values = validPoints.map((p) => p.value);
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const range = maxVal - minVal || 1;
+
+  const allDates = points.map((p) => p.date);
+  const totalSpan = allDates.length - 1 || 1;
+
+  const toX = (i: number) => padL + (i / totalSpan) * chartW;
+  const toY = (v: number) => padT + chartH - ((v - minVal) / range) * chartH;
+
+  const pathPoints = validPoints.map((p) => {
+    const idx = allDates.indexOf(p.date);
+    return `${toX(idx).toFixed(1)},${toY(p.value).toFixed(1)}`;
+  });
+
+  const polyline = `<polyline points="${pathPoints.join(" ")}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>`;
+
+  const dots = validPoints.length <= 14
+    ? validPoints.map((p) => {
+        const idx = allDates.indexOf(p.date);
+        return `<circle cx="${toX(idx).toFixed(1)}" cy="${toY(p.value).toFixed(1)}" r="2.5" fill="${color}"/>`;
+      }).join("")
+    : "";
+
+  const avgLine = avgValue != null
+    ? (() => {
+        const ay = toY(avgValue).toFixed(1);
+        return `<line x1="${padL}" y1="${ay}" x2="${W - padR}" y2="${ay}" stroke="${color}" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.8"/>
+        <text x="${W - padR - 2}" y="${(Number(ay) - 3).toFixed(1)}" text-anchor="end" fill="${color}" font-size="9">${formatLabel(avgValue)}</text>`;
+      })()
+    : "";
+
+  const yLabels = `
+    <text x="${padL - 3}" y="${(padT + chartH).toFixed(1)}" text-anchor="end" fill="#999" font-size="9">${formatLabel(minVal)}</text>
+    <text x="${padL - 3}" y="${(padT + 8).toFixed(1)}" text-anchor="end" fill="#999" font-size="9">${formatLabel(maxVal)}</text>
+  `;
+
+  const xLabels = validPoints.length > 0
+    ? (() => {
+        const first = validPoints[0];
+        const last = validPoints[validPoints.length - 1];
+        const firstIdx = allDates.indexOf(first.date);
+        const lastIdx = allDates.indexOf(last.date);
+        return `<text x="${toX(firstIdx).toFixed(1)}" y="${H - 4}" text-anchor="middle" fill="#999" font-size="9">${formatDate(first.date)}</text>
+                <text x="${toX(lastIdx).toFixed(1)}" y="${H - 4}" text-anchor="middle" fill="#999" font-size="9">${formatDate(last.date)}</text>`;
+      })()
+    : "";
+
+  return `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+    <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + chartH}" stroke="#ddd" stroke-width="1"/>
+    <line x1="${padL}" y1="${padT + chartH}" x2="${W - padR}" y2="${padT + chartH}" stroke="#ddd" stroke-width="1"/>
+    ${polyline}
+    ${dots}
+    ${avgLine}
+    ${yLabels}
+    ${xLabels}
+  </svg>`;
+}
+
 function generateReportHtml(
   report: HealthReport,
   t: (key: string, options?: { defaultValue?: string }) => string,
@@ -527,6 +688,61 @@ function generateReportHtml(
     if (val === null) return "--";
     return (val / divisor).toFixed(decimals);
   };
+
+  const fmtDate = (d: string) => {
+    const dt = new Date(d);
+    return dt.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  };
+
+  const fmtSleep = (s: number) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    return m === 0 ? `${h}h` : `${h}h${String(m).padStart(2, "0")}`;
+  };
+
+  const hasSleepData = report.dailyData.sleep.some((p) => p.value !== null);
+  const hasStepsData = report.dailyData.steps.some((p) => p.value !== null);
+  const hasWeightData = report.dailyData.weight.some((p) => p.value !== null);
+
+  const sleepSvg = hasSleepData
+    ? generateSvgBarChart(
+        report.dailyData.sleep,
+        "#8b5cf6",
+        report.currentMetrics.sleep.avgDuration,
+        fmtSleep,
+        fmtDate,
+      )
+    : "";
+
+  const stepsSvg = hasStepsData
+    ? generateSvgBarChart(
+        report.dailyData.steps,
+        "#10b981",
+        report.currentMetrics.activity.avgSteps,
+        (v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(Math.round(v)),
+        fmtDate,
+      )
+    : "";
+
+  const weightSvg = hasWeightData
+    ? generateSvgLineChart(
+        report.dailyData.weight,
+        "#f59e0b",
+        report.currentMetrics.body.avgWeight,
+        (v) => `${v.toFixed(1)}`,
+        fmtDate,
+      )
+    : "";
+
+  const chartsSection = (hasSleepData || hasStepsData || hasWeightData)
+    ? `
+  <h2>${t("reports.charts.title", { defaultValue: "Charts" })}</h2>
+  <div class="charts-grid">
+    ${hasSleepData ? `<div class="chart-card"><div class="chart-title">${t("reports.charts.sleepDuration", { defaultValue: "Sleep Duration" })}</div>${sleepSvg}</div>` : ""}
+    ${hasStepsData ? `<div class="chart-card"><div class="chart-title">${t("reports.charts.dailySteps", { defaultValue: "Daily Steps" })}</div>${stepsSvg}</div>` : ""}
+    ${hasWeightData ? `<div class="chart-card"><div class="chart-title">${t("reports.charts.weight", { defaultValue: "Weight" })}</div>${weightSvg}</div>` : ""}
+  </div>`
+    : "";
 
   return `
 <!DOCTYPE html>
@@ -580,15 +796,20 @@ function generateReportHtml(
     .event-title { font-weight: 600; }
     .event-date { color: #999; font-size: 12px; }
     .event-desc { color: #666; margin-top: 5px; }
+    .charts-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+    .chart-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+    .chart-title { font-size: 12px; font-weight: 600; color: #666; margin-bottom: 8px; }
     .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px; }
     @media print {
       body { background: white; padding: 0; }
       .metrics-grid { grid-template-columns: repeat(3, 1fr); }
       .highlight-card { break-inside: avoid; }
+      .chart-card { break-inside: avoid; }
     }
     @media (max-width: 600px) {
       .metrics-grid { grid-template-columns: 1fr; }
       .highlights { grid-template-columns: 1fr; }
+      .charts-grid { flex-direction: column; }
     }
   </style>
 </head>
@@ -657,6 +878,8 @@ function generateReportHtml(
       </div>
     </div>
   </div>
+
+  ${chartsSection}
 
   ${report.highlights.length > 0 ? `
   <h2>${t("reports.highlights", { defaultValue: "Best & Worst Days" })}</h2>
