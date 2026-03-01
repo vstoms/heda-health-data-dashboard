@@ -44,7 +44,15 @@
     "deepSleep": "Sommeil profond",
     "remSleep": "Sommeil paradoxal",
     "awake": "Éveil",
-    "sleepScore": "Score de sommeil"
+    "sleepScore": "Score de sommeil",
+    "min": "Min",
+    "max": "Max",
+    "readings": "Mesures",
+    "temperature": "Température",
+    "avgTemperature": "Temp. moy.",
+    "minTemperature": "Temp. min.",
+    "maxTemperature": "Temp. max.",
+    "readingsCount": "Mesures"
   },
   "device": {
     "sleep_mat": "Capteur de sommeil",
@@ -217,9 +225,11 @@
       "activity": "Activité",
       "sleep": "Sommeil",
       "body": "Corps",
+      "temperature": "Température",
       "emptyActivity": "Aucune donnée d'activité disponible dans cet export.",
       "emptySleep": "Aucune donnée de sommeil disponible dans cet export.",
       "emptyWeight": "Aucune donnée de poids disponible dans cet export.",
+      "emptyTemperature": "Aucune donnée de température corporelle disponible dans cet export.",
       "reimport": "Réimporter les données",
       "excludeNaps": "Exclure les siestes (≤4h entre 9h-20h)",
       "excludeWeekends": "Exclure les week-ends",
@@ -416,6 +426,29 @@
         "summaryLabel": "Moy. éveillé",
         "series": "Éveillé",
         "axis": "Temps éveillé"
+      }
+    },
+    "temperature": {
+      "title": "Température corporelle",
+      "axis": "Température (°C)",
+      "seriesAvg": "Moy. journalière",
+      "rangeLabel": "Plage : {{min}}°C - {{max}}°C",
+      "summary": "Moy. : {{avg}}°C • Plage : {{min}}°C - {{max}}°C",
+      "feverThresholdLabel": "Seuil fièvre (°C)",
+      "feverDaySeries": "Fièvre",
+      "feverAlert": "Au-dessus du seuil de fièvre ({{threshold}}°C)",
+      "feverStats": {
+        "title": "Statistiques de fièvre",
+        "subtitle": "Jours avec temp. moy. >= {{threshold}}°C dans la plage visible",
+        "noFeverDays": "Aucun jour de fièvre détecté (seuil : {{threshold}}°C)",
+        "feverDays": "Jours de fièvre",
+        "ofTotalDays": "sur {{total}} jours ({{percent}} %)",
+        "longestStreak": "Série la plus longue",
+        "days": "jours consécutifs",
+        "peakTemp": "Température maximale",
+        "highest": "Mesure la plus haute",
+        "avgFeverTemp": "Temp. moy. de fièvre",
+        "onFeverDays": "Les jours de fièvre"
       }
     }
   },

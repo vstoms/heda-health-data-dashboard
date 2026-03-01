@@ -391,6 +391,70 @@ export async function exportToExcel(data: HealthMetrics, t: TFunction) {
     }),
   );
 
+  // Body Temperature Sheet (aggregated per day)
+  if (data.bodyTemperature.length > 0) {
+    const tempByDay = new Map<string, number[]>();
+    for (const reading of data.bodyTemperature) {
+      const bucket = tempByDay.get(reading.date) ?? [];
+      bucket.push(reading.temperature);
+      tempByDay.set(reading.date, bucket);
+    }
+
+    const tempRows = Array.from(tempByDay.entries())
+      .map(([dateStr, temps]) => {
+        const avg = temps.reduce((sum, value) => sum + value, 0) / temps.length;
+        const date = new Date(dateStr);
+        return {
+          date,
+          weekday: getWeekday(date),
+          avg: Math.round(avg * 100) / 100,
+          min: Math.min(...temps),
+          max: Math.max(...temps),
+          count: temps.length,
+        };
+      })
+      .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    addSheet(
+      "Temperature",
+      t("common.temperature", "Temperature"),
+      [
+        {
+          header: t("common.date", "Date"),
+          key: "date",
+          width: 12,
+          numFmt: "yyyy-mm-dd",
+        },
+        {
+          header: t("common.day", "Day"),
+          key: "weekday",
+          width: 12,
+        },
+        {
+          header: `${t("common.avgTemperature", "Avg Temp")} (°C)`,
+          key: "avg",
+          numFmt: "0.00",
+        },
+        {
+          header: `${t("common.minTemperature", "Min Temp")} (°C)`,
+          key: "min",
+          numFmt: "0.00",
+        },
+        {
+          header: `${t("common.maxTemperature", "Max Temp")} (°C)`,
+          key: "max",
+          numFmt: "0.00",
+        },
+        {
+          header: t("common.readingsCount", "Readings"),
+          key: "count",
+          numFmt: "0",
+        },
+      ],
+      tempRows,
+    );
+  }
+
   // Generate Buffer
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {

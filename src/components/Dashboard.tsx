@@ -128,6 +128,7 @@ export function Dashboard({
             hasSteps={metrics.hasSteps}
             hasSleep={metrics.hasSleep}
             hasWeight={metrics.hasWeight}
+            hasBodyTemperature={metrics.hasBodyTemperature}
             stepsData={metrics.stepsData}
             allSleepData={metrics.sleepData}
             allSleepDataProcessed={metrics.allSleepDataProcessed}
@@ -136,6 +137,7 @@ export function Dashboard({
             heightData={metrics.heightData}
             spo2Data={metrics.spo2Data}
             activitiesData={metrics.activitiesData}
+            bodyTemperatureData={metrics.bodyTemperatureData}
             doubleTrackerStats={metrics.doubleTrackerStats}
             events={events}
             range={range}

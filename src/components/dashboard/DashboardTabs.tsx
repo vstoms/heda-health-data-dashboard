@@ -1,10 +1,17 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Activity, ArrowLeftRight, Database, Moon, Scale } from "lucide-react";
+import {
+  Activity,
+  ArrowLeftRight,
+  Database,
+  Moon,
+  Scale,
+} from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StepsChart } from "@/components/charts/activity/StepsChart";
 import { SleepChart } from "@/components/charts/sleep/SleepChart";
 import { SleepDebtCard } from "@/components/charts/sleep/SleepDebtCard";
+import { BodyTemperatureChart } from "@/components/charts/temperature/BodyTemperatureChart";
 import { WeightChart } from "@/components/charts/weight/WeightChart";
 import { ComparisonMode } from "@/components/comparison/ComparisonMode";
 import { DataBrowser } from "@/components/dashboard/DataBrowser";
@@ -20,6 +27,7 @@ import type { DateRangeOption } from "@/lib/constants";
 import type {
   ActivityData,
   BloodPressureData,
+  BodyTemperatureReading,
   HealthData,
   HeightData,
   PatternEvent,
@@ -33,6 +41,7 @@ interface DashboardTabsProps {
   hasSteps: boolean;
   hasSleep: boolean;
   hasWeight: boolean;
+  hasBodyTemperature: boolean;
   stepsData: StepData[];
   allSleepData: SleepData[];
   allSleepDataProcessed: SleepData[];
@@ -41,6 +50,7 @@ interface DashboardTabsProps {
   heightData: HeightData[];
   spo2Data: SpO2Data[];
   activitiesData: ActivityData[];
+  bodyTemperatureData: BodyTemperatureReading[];
   doubleTrackerStats?: DoubleTrackerStats;
   events: PatternEvent[];
   range: DateRangeOption;
@@ -65,6 +75,7 @@ export function DashboardTabs({
   hasSteps,
   hasSleep,
   hasWeight,
+  hasBodyTemperature,
   stepsData,
   allSleepData,
   allSleepDataProcessed,
@@ -73,6 +84,7 @@ export function DashboardTabs({
   heightData,
   spo2Data,
   activitiesData,
+  bodyTemperatureData,
   doubleTrackerStats,
   events,
   range,
@@ -98,11 +110,11 @@ export function DashboardTabs({
     () => [
       ...(hasSteps ? ["activity"] : []),
       ...(hasSleep ? ["sleep"] : []),
-      ...(hasWeight ? ["body"] : []),
+      ...(hasWeight || hasBodyTemperature ? ["body"] : []),
       "compare",
       "explorer",
     ],
-    [hasSleep, hasSteps, hasWeight],
+    [hasBodyTemperature, hasSleep, hasSteps, hasWeight],
   );
   const [activeTab, setActiveTab] = useState(tabOrder[0]);
   const [tabDirection, setTabDirection] = useState(0);
@@ -127,7 +139,10 @@ export function DashboardTabs({
   );
 
   const visibleTabsCount =
-    (hasSteps ? 1 : 0) + (hasSleep ? 1 : 0) + (hasWeight ? 1 : 0) + 2; // +2 for compare and explorer
+    (hasSteps ? 1 : 0) +
+    (hasSleep ? 1 : 0) +
+    (hasWeight || hasBodyTemperature ? 1 : 0) +
+    2; // +2 for compare and explorer
 
   const renderActiveContent = useCallback(() => {
     if (resolvedActiveTab === "activity") {
@@ -186,14 +201,27 @@ export function DashboardTabs({
     }
 
     if (resolvedActiveTab === "body") {
-      return hasWeight ? (
-        <WeightChart
-          data={weightData}
-          events={events}
-          range={range}
-          customRange={customRange}
-          onRangeChange={(nextRange) => onRangeChange(nextRange)}
-        />
+      return hasWeight || hasBodyTemperature ? (
+        <>
+          {hasWeight ? (
+            <WeightChart
+              data={weightData}
+              events={events}
+              range={range}
+              customRange={customRange}
+              onRangeChange={(nextRange) => onRangeChange(nextRange)}
+            />
+          ) : null}
+          {hasBodyTemperature ? (
+            <BodyTemperatureChart
+              data={bodyTemperatureData}
+              events={events}
+              range={range}
+              customRange={customRange}
+              onRangeChange={(nextRange) => onRangeChange(nextRange)}
+            />
+          ) : null}
+        </>
       ) : (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border py-12 text-center text-muted-foreground">
           <p>{t("dashboard.tabs.emptyWeight")}</p>
@@ -222,6 +250,7 @@ export function DashboardTabs({
         height={heightData}
         spo2={spo2Data}
         activities={activitiesData}
+        bodyTemperature={bodyTemperatureData}
       />
     );
   }, [
@@ -229,6 +258,7 @@ export function DashboardTabs({
     allSleepDataProcessed,
     activitiesData,
     bpData,
+    bodyTemperatureData,
     customRange,
     dataBounds,
     doubleTrackerStats,
@@ -237,6 +267,7 @@ export function DashboardTabs({
     excludeWeekends,
     hasSleep,
     hasSteps,
+    hasBodyTemperature,
     hasWeight,
     healthData,
     heightData,
@@ -306,6 +337,12 @@ export function DashboardTabs({
             </TabsTrigger>
           )}
           {hasWeight && (
+            <TabsTrigger value="body">
+              <Scale className="w-4 h-4 mr-2" />
+              {t("dashboard.tabs.body")}
+            </TabsTrigger>
+          )}
+          {!hasWeight && hasBodyTemperature && (
             <TabsTrigger value="body">
               <Scale className="w-4 h-4 mr-2" />
               {t("dashboard.tabs.body")}

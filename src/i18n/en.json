@@ -44,7 +44,15 @@
     "deepSleep": "Deep Sleep",
     "remSleep": "REM Sleep",
     "awake": "Awake",
-    "sleepScore": "Sleep Score"
+    "sleepScore": "Sleep Score",
+    "min": "Min",
+    "max": "Max",
+    "readings": "Readings",
+    "temperature": "Temperature",
+    "avgTemperature": "Avg Temp",
+    "minTemperature": "Min Temp",
+    "maxTemperature": "Max Temp",
+    "readingsCount": "Readings"
   },
   "device": {
     "sleep_mat": "Sleep Mat",
@@ -217,9 +225,11 @@
       "activity": "Activity",
       "sleep": "Sleep",
       "body": "Body",
+      "temperature": "Temperature",
       "emptyActivity": "No activity data available in this export.",
       "emptySleep": "No sleep data available in this export.",
       "emptyWeight": "No weight data available in this export.",
+      "emptyTemperature": "No body temperature data available in this export.",
       "reimport": "Reimport data",
       "excludeNaps": "Exclude naps (≤4h between 9am–8pm)",
       "excludeWeekends": "Exclude weekend days",
@@ -416,6 +426,29 @@
         "summaryLabel": "Avg awake",
         "series": "Awake",
         "axis": "Awake time"
+      }
+    },
+    "temperature": {
+      "title": "Body Temperature",
+      "axis": "Temperature (°C)",
+      "seriesAvg": "Daily Avg",
+      "rangeLabel": "Range: {{min}}°C - {{max}}°C",
+      "summary": "Avg: {{avg}}°C • Range: {{min}}°C - {{max}}°C",
+      "feverThresholdLabel": "Fever threshold (°C)",
+      "feverDaySeries": "Fever",
+      "feverAlert": "Above fever threshold ({{threshold}}°C)",
+      "feverStats": {
+        "title": "Fever Statistics",
+        "subtitle": "Days with avg temperature >= {{threshold}}°C in the visible range",
+        "noFeverDays": "No fever days detected (threshold: {{threshold}}°C)",
+        "feverDays": "Fever days",
+        "ofTotalDays": "of {{total}} days ({{percent}}%)",
+        "longestStreak": "Longest streak",
+        "days": "consecutive days",
+        "peakTemp": "Peak temperature",
+        "highest": "Highest reading",
+        "avgFeverTemp": "Avg fever temp",
+        "onFeverDays": "On fever days"
       }
     }
   },

@@ -16,6 +16,7 @@ const createEmptyMetrics = (): HealthMetrics => ({
   height: [],
   spo2: [],
   activities: [],
+  bodyTemperature: [],
 });
 
 export const normalizeMetrics = (
@@ -28,6 +29,7 @@ export const normalizeMetrics = (
   height: data?.height ?? [],
   spo2: data?.spo2 ?? [],
   activities: data?.activities ?? [],
+  bodyTemperature: data?.bodyTemperature ?? [],
 });
 
 export const createDataSource = (
@@ -57,7 +59,11 @@ export const aggregateHealthData = (store: HealthDataStore): HealthData => {
       bp: [...acc.bp, ...source.data.bp],
       height: [...acc.height, ...source.data.height],
       spo2: [...acc.spo2, ...source.data.spo2],
-      activities: [...acc.activities, ...source.data.activities],
+      activities: [...acc.activities, ...(source.data.activities ?? [])],
+      bodyTemperature: [
+        ...acc.bodyTemperature,
+        ...(source.data.bodyTemperature ?? []),
+      ],
     }),
     createEmptyMetrics(),
   );

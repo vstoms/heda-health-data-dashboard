@@ -7,6 +7,7 @@ import {
   parseSpO2Data,
   parseWeightData,
 } from "@/services/parsers/bodyParser";
+import { parseBodyTemperatureData } from "@/services/parsers/bodyTemperatureParser";
 import { parseSleepData } from "@/services/parsers/sleepParser";
 import { parseStepsData } from "@/services/parsers/stepsParser";
 import type { HealthMetrics } from "@/types";
@@ -23,7 +24,7 @@ export async function parseWithingsZip(file: File): Promise<HealthMetrics> {
   debugLog("Files found in ZIP:", files);
 
   // Parallel parsing for performance
-  const [steps, sleep, weight, bp, height, spo2, activities] =
+  const [steps, sleep, weight, bp, height, spo2, activities, bodyTemperature] =
     await Promise.all([
       parseStepsData(zip),
       parseSleepData(zip),
@@ -32,6 +33,7 @@ export async function parseWithingsZip(file: File): Promise<HealthMetrics> {
       parseHeightData(zip),
       parseSpO2Data(zip),
       parseActivitiesData(zip),
+      parseBodyTemperatureData(zip),
     ]);
 
   debugLog("Parsing complete", {
@@ -42,7 +44,17 @@ export async function parseWithingsZip(file: File): Promise<HealthMetrics> {
     heightCount: height.length,
     spo2Count: spo2.length,
     activitiesCount: activities.length,
+    bodyTemperatureCount: bodyTemperature.length,
   });
 
-  return { steps, sleep, weight, bp, height, spo2, activities };
+  return {
+    steps,
+    sleep,
+    weight,
+    bp,
+    height,
+    spo2,
+    activities,
+    bodyTemperature,
+  };
 }

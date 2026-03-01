@@ -12,6 +12,7 @@ import {
   Ruler,
   Scale,
   ShieldCheck,
+  Thermometer,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,6 +32,7 @@ import { exportToExcel } from "@/services/exportService";
 import type {
   ActivityData,
   BloodPressureData,
+  BodyTemperatureReading,
   HeightData,
   SleepData,
   SpO2Data,
@@ -38,6 +40,7 @@ import type {
   WeightData,
 } from "@/types";
 import { DataQualityPanel } from "./DataQualityPanel";
+import { TemperatureBrowser } from "./TemperatureBrowser";
 
 interface DataBrowserProps {
   sleep: SleepData[];
@@ -47,6 +50,7 @@ interface DataBrowserProps {
   height: HeightData[];
   spo2: SpO2Data[];
   activities: ActivityData[];
+  bodyTemperature: BodyTemperatureReading[];
 }
 
 type Category =
@@ -57,6 +61,7 @@ type Category =
   | "height"
   | "spo2"
   | "activities"
+  | "temperature"
   | "quality";
 
 export function DataBrowser({
@@ -67,6 +72,7 @@ export function DataBrowser({
   height,
   spo2,
   activities,
+  bodyTemperature,
 }: DataBrowserProps) {
   const { t, i18n } = useTranslation();
   const [category, setCategory] = useState<Category>(() => {
@@ -77,6 +83,7 @@ export function DataBrowser({
     if (bp.length > 0) return "bp";
     if (spo2.length > 0) return "spo2";
     if (height.length > 0) return "height";
+    if (bodyTemperature.length > 0) return "temperature";
     return "quality";
   });
   const [currentPage, setCurrentPage] = useState(1);
@@ -91,7 +98,7 @@ export function DataBrowser({
     setIsExporting(true);
     try {
       await exportToExcel(
-        { sleep, steps, weight, bp, height, spo2, activities },
+        { sleep, steps, weight, bp, height, spo2, activities, bodyTemperature },
         t,
       );
     } catch (error) {
@@ -134,6 +141,7 @@ export function DataBrowser({
       | HeightData
       | SpO2Data
       | ActivityData
+      | BodyTemperatureReading
     )[] = [];
     if (category === "sleep") data = [...sleep];
     else if (category === "steps") data = [...steps];
@@ -142,13 +150,18 @@ export function DataBrowser({
     else if (category === "height") data = [...height];
     else if (category === "spo2") data = [...spo2];
     else if (category === "activities") data = [...activities];
+    else if (category === "temperature") return [];
     else if (category === "quality") return [];
 
     return data.sort((a, b) => {
       const startA =
-        (a as { start?: string }).start || (a as { date: string }).date;
+        (a as { start?: string; timestamp?: string }).start ||
+        (a as { timestamp?: string }).timestamp ||
+        (a as { date: string }).date;
       const startB =
-        (b as { start?: string }).start || (b as { date: string }).date;
+        (b as { start?: string; timestamp?: string }).start ||
+        (b as { timestamp?: string }).timestamp ||
+        (b as { date: string }).date;
       const dateA = new Date(startA).getTime();
       const dateB = new Date(startB).getTime();
       return dateB - dateA;
@@ -176,7 +189,8 @@ export function DataBrowser({
     weight.length > 0 ||
     bp.length > 0 ||
     spo2.length > 0 ||
-    height.length > 0;
+    height.length > 0 ||
+    bodyTemperature.length > 0;
 
   return (
     <Card className="mt-6">
@@ -246,6 +260,13 @@ export function DataBrowser({
                 {t("common.height", "Height")} ({height.length})
               </TabsTrigger>
             )}
+            {bodyTemperature.length > 0 && (
+              <TabsTrigger value="temperature" className="text-xs">
+                <Thermometer className="mr-2 h-4 w-4" />
+                {t("common.temperature", "Temperature")} (
+                {bodyTemperature.length})
+              </TabsTrigger>
+            )}
             <TabsTrigger value="quality" className="text-xs">
               <ShieldCheck className="mr-2 h-4 w-4 text-amber-500" />
               {t("dashboard.dataBrowser.quality", "Data Quality")}
@@ -256,6 +277,8 @@ export function DataBrowser({
       <CardContent>
         {category === "quality" ? (
           <DataQualityPanel sleep={sleep} />
+        ) : category === "temperature" ? (
+          <TemperatureBrowser bodyTemperature={bodyTemperature} />
         ) : !hasDataCategory ? (
           <div className="py-12 text-center text-muted-foreground">
             {t("common.noData", "—")}

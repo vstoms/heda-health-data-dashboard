@@ -64,6 +64,12 @@ export interface ActivityData {
   distance?: number;
 }
 
+export interface BodyTemperatureReading {
+  timestamp: string;
+  date: string;
+  temperature: number;
+}
+
 export type PatternEventType = "point" | "range";
 
 export interface PatternEvent {
@@ -85,6 +91,7 @@ export interface HealthMetrics {
   height: HeightData[];
   spo2: SpO2Data[];
   activities: ActivityData[];
+  bodyTemperature: BodyTemperatureReading[];
 }
 
 export type DataSourceId = "withings" | (string & {});

@@ -14,9 +14,12 @@ export function useDataBounds(data: HealthData): DateBounds | null {
     data.weight.forEach((item) => {
       timestamps.push(new Date(item.date).getTime());
     });
+    data.bodyTemperature.forEach((item) => {
+      timestamps.push(new Date(item.date).getTime());
+    });
     if (timestamps.length === 0) return null;
     const min = new Date(Math.min(...timestamps));
     const max = new Date(Math.max(...timestamps));
     return { min, max };
-  }, [data.sleep, data.steps, data.weight]);
+  }, [data.sleep, data.steps, data.weight, data.bodyTemperature]);
 }

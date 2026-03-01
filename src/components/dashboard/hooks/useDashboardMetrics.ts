@@ -18,6 +18,7 @@ import {
 import type {
   ActivityData,
   BloodPressureData,
+  BodyTemperatureReading,
   HealthData,
   HeightData,
   SleepData,
@@ -39,6 +40,7 @@ export interface DashboardMetricsResult {
   hasSteps: boolean;
   hasSleep: boolean;
   hasWeight: boolean;
+  hasBodyTemperature: boolean;
   stepsData: StepData[];
   sleepData: SleepData[];
   weightData: WeightData[];
@@ -46,6 +48,7 @@ export interface DashboardMetricsResult {
   heightData: HeightData[];
   spo2Data: SpO2Data[];
   activitiesData: ActivityData[];
+  bodyTemperatureData: BodyTemperatureReading[];
   rangeStepsData: StepData[];
   rangeSleepData: SleepData[];
   rangeSleepDataProcessed: SleepData[];
@@ -96,6 +99,7 @@ export function useDashboardMetrics(
       height: data.height,
       spo2: data.spo2,
       activities: data.activities,
+      bodyTemperature: data.bodyTemperature,
       events: data.events || [],
     }),
     [data],
@@ -104,6 +108,7 @@ export function useDashboardMetrics(
   const hasSteps = dataSources.steps.length > 0;
   const hasSleep = dataSources.sleep.length > 0;
   const hasWeight = dataSources.weight.length > 0;
+  const hasBodyTemperature = dataSources.bodyTemperature.length > 0;
 
   const stepsData = dataSources.steps;
   const rawSleepData = dataSources.sleep;
@@ -116,6 +121,7 @@ export function useDashboardMetrics(
   const heightData = dataSources.height;
   const spo2Data = dataSources.spo2;
   const activitiesData = dataSources.activities;
+  const bodyTemperatureData = dataSources.bodyTemperature;
 
   const weekendDaySet = useMemo(() => new Set(weekendDays), [weekendDays]);
 
@@ -288,6 +294,7 @@ export function useDashboardMetrics(
     hasSteps,
     hasSleep,
     hasWeight,
+    hasBodyTemperature,
     stepsData,
     sleepData: rawSleepData,
     weightData,
@@ -295,6 +302,7 @@ export function useDashboardMetrics(
     heightData,
     spo2Data,
     activitiesData,
+    bodyTemperatureData,
     rangeStepsData,
     rangeSleepData,
     rangeSleepDataProcessed,
