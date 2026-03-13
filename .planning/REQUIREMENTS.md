@@ -1,0 +1,71 @@
+# Requirements: Heda - Health Data Dashboard
+
+**Defined:** 2026-03-13
+**Core Value:** Users can quickly understand whether they are meeting their sleep needs, especially by seeing daily sleep deficit or surplus clearly.
+
+## v1 Requirements
+
+Requirements for this milestone release. Each maps to roadmap phases.
+
+### Sleep Gap Visualization
+
+- [ ] **SLPG-01**: User can view a daily chart in the Sleep section with sleep duration and sleep need values.
+- [ ] **SLPG-02**: User can see signed daily gap (`duration - need`) clearly as deficit or surplus.
+- [ ] **SLPG-03**: User can inspect per-day details showing effective sleep duration, sleep need, gap, and time in bed.
+
+### Sleep Data Correctness
+
+- [ ] **SLPD-01**: Overnight sleep sessions are attributed to the wake day in daily aggregation.
+- [ ] **SLPD-02**: Effective sleep duration excludes awake time in all charted sleep-duration values.
+- [ ] **SLPD-03**: If base sleep duration is missing or zero, duration is derived from sleep phases (light + deep + REM) per existing rules.
+- [ ] **SLPD-04**: When sleep need is unavailable for a day, UI shows an explicit missing state rather than treating need as zero.
+
+### UX and Internationalization
+
+- [ ] **SLPU-01**: New sleep-gap labels, legends, and tooltips are internationalized through existing i18n files.
+- [ ] **SLPU-02**: Chart colors and baseline make deficit versus surplus visually distinguishable at a glance.
+
+## v2 Requirements
+
+Deferred to future release. Tracked but not in current roadmap.
+
+### Advanced Sleep Insights
+
+- **SLPA-01**: User can view rolling sleep debt trend (7/14 day windows).
+- **SLPA-02**: User can view consistency scoring against personal baseline.
+- **SLPA-03**: User can view insight-level recommendations based on sustained deficit/surplus patterns.
+
+## Out of Scope
+
+Explicitly excluded for this milestone.
+
+| Feature | Reason |
+|---------|--------|
+| Backend sync for sleep analytics | Product remains local-first and client-only in this scope |
+| Non-Withings sleep-need estimation model | v1 uses source-provided sleep-need values directly |
+| Cross-domain dashboard redesign | Scope limited to Sleep section feature delivery |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| SLPG-01 | TBD | Pending |
+| SLPG-02 | TBD | Pending |
+| SLPG-03 | TBD | Pending |
+| SLPD-01 | TBD | Pending |
+| SLPD-02 | TBD | Pending |
+| SLPD-03 | TBD | Pending |
+| SLPD-04 | TBD | Pending |
+| SLPU-01 | TBD | Pending |
+| SLPU-02 | TBD | Pending |
+
+**Coverage:**
+- v1 requirements: 9 total
+- Mapped to phases: 0
+- Unmapped: 9 ⚠️
+
+---
+*Requirements defined: 2026-03-13*
+*Last updated: 2026-03-13 after initial definition*
