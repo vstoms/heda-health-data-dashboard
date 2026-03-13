@@ -51,21 +51,21 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SLPG-01 | TBD | Pending |
-| SLPG-02 | TBD | Pending |
-| SLPG-03 | TBD | Pending |
-| SLPD-01 | TBD | Pending |
-| SLPD-02 | TBD | Pending |
-| SLPD-03 | TBD | Pending |
-| SLPD-04 | TBD | Pending |
-| SLPU-01 | TBD | Pending |
-| SLPU-02 | TBD | Pending |
+| SLPG-01 | Phase 1 | Pending |
+| SLPG-02 | Phase 2 | Pending |
+| SLPG-03 | Phase 2 | Pending |
+| SLPD-01 | Phase 1 | Pending |
+| SLPD-02 | Phase 1 | Pending |
+| SLPD-03 | Phase 1 | Pending |
+| SLPD-04 | Phase 1 | Pending |
+| SLPU-01 | Phase 3 | Pending |
+| SLPU-02 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 9 total
-- Mapped to phases: 0
-- Unmapped: 9 ⚠️
+- Mapped to phases: 9
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 after initial definition*
+*Last updated: 2026-03-13 after roadmap creation*
