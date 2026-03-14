@@ -82,6 +82,11 @@ export function SleepDurationChart({
   const { t } = useTranslation();
   const { theme } = useTheme();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const deficitFill = theme === "dark" ? "#f87171" : "#dc2626";
+  const deficitStroke = theme === "dark" ? "#fecaca" : "#991b1b";
+  const surplusFill = theme === "dark" ? "#2dd4bf" : "#0f766e";
+  const surplusStroke = theme === "dark" ? "#99f6e4" : "#115e59";
+  const neutralFill = theme === "dark" ? "#cbd5e1" : "#64748b";
 
   const chartData =
     visibleComparisonData.length > 0 ? visibleComparisonData : comparisonData;
@@ -149,12 +154,13 @@ export function SleepDurationChart({
     yAxis: 0,
     lineStyle: {
       color: theme === "dark" ? "#e5e7eb" : "#111827",
-      width: 2,
+      width: 3,
       type: "solid",
     },
     label: {
       show: false,
     },
+    z: 10,
   };
 
   const gapSummaryText =
@@ -317,20 +323,50 @@ export function SleepDurationChart({
             const value = params.value?.[1];
 
             if (typeof value !== "number") {
-              return theme === "dark" ? "#94a3b8" : "#9ca3af";
+              return neutralFill;
             }
 
             if (value > 0) {
-              return "#0f766e";
+              return surplusFill;
             }
 
             if (value < 0) {
-              return "#dc2626";
+              return deficitFill;
             }
 
             return "#475569";
           },
-          borderRadius: [6, 6, 0, 0],
+          borderColor: (params: { value?: [number, number | null] }) => {
+            const value = params.value?.[1];
+
+            if (typeof value !== "number") {
+              return neutralFill;
+            }
+
+            if (value > 0) {
+              return surplusStroke;
+            }
+
+            if (value < 0) {
+              return deficitStroke;
+            }
+
+            return neutralFill;
+          },
+          borderWidth: (params: { value?: [number, number | null] }) => {
+            const value = params.value?.[1];
+
+            return typeof value === "number" && value !== 0 ? 1.5 : 1;
+          },
+          borderRadius: (params: { value?: [number, number | null] }) => {
+            const value = params.value?.[1];
+
+            if (typeof value !== "number" || value === 0) {
+              return [6, 6, 6, 6];
+            }
+
+            return value > 0 ? [6, 6, 0, 0] : [0, 0, 6, 6];
+          },
         },
         markLine:
           {
