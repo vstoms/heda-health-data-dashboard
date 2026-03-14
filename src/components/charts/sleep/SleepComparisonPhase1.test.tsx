@@ -95,7 +95,7 @@ describe("Sleep comparison Phase 1 baseline harness", () => {
     ).toHaveLength(2);
     expect(screen.getByTestId("sleep-duration-echart")).toBeInTheDocument();
 
-    const chartProps = echartsSpy.mock.calls.at(-1)?.[0] as {
+    const chartProps = echartsSpy.mock.calls[echartsSpy.mock.calls.length - 1]?.[0] as {
       option: {
         series: Array<{
           name: string;
@@ -122,7 +122,7 @@ describe("Sleep comparison Phase 1 baseline harness", () => {
       screen.getByText("Mar 11, 2026: sleep need unavailable from Withings."),
     ).toBeInTheDocument();
 
-    const chartProps = echartsSpy.mock.calls.at(-1)?.[0] as {
+    const chartProps = echartsSpy.mock.calls[echartsSpy.mock.calls.length - 1]?.[0] as {
       option: {
         tooltip: {
           formatter: (

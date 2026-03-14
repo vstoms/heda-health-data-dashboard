@@ -181,6 +181,7 @@ export function SleepChart({
   const yearFormatter = new Intl.DateTimeFormat(locale, {
     year: "numeric",
   });
+  const rollingLabel = t("charts.rollingLabel", { count: rollingWindowDays });
   const rangeWindow = (() => {
     if (sortedData.length === 0) return null;
     if (range === "custom") {
