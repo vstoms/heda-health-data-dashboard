@@ -10,7 +10,7 @@ Requirements for this milestone release. Each maps to roadmap phases.
 ### Sleep Gap Visualization
 
 - [x] **SLPG-01**: User can view a daily chart in the Sleep section with sleep duration and sleep need values.
-- [ ] **SLPG-02**: User can see signed daily gap (`duration - need`) clearly as deficit or surplus.
+- [x] **SLPG-02**: User can see signed daily gap (`duration - need`) clearly as deficit or surplus.
 - [ ] **SLPG-03**: User can inspect per-day details showing effective sleep duration, sleep need, gap, and time in bed.
 
 ### Sleep Data Correctness
@@ -52,7 +52,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | SLPG-01 | Phase 1 | Complete |
-| SLPG-02 | Phase 2 | Pending |
+| SLPG-02 | Phase 2 | Complete |
 | SLPG-03 | Phase 2 | Pending |
 | SLPD-01 | Phase 1 | Complete |
 | SLPD-02 | Phase 1 | Complete |
@@ -68,4 +68,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-14 after completing plan 01-01*
+*Last updated: 2026-03-14 after completing plan 02-01*

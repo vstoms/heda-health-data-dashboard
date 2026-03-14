@@ -42,10 +42,11 @@ Plans:
   1. User can view a signed daily gap in the Sleep section where each day clearly represents `duration - need`.
   2. User can tell whether a given day is a deficit or surplus directly from the chart without needing to calculate it manually.
   3. User can inspect a specific day and see effective sleep duration, sleep need, gap, and time in bed together.
-**Plans**: TBD
+**Plans**: 2
 
 Plans:
-- [ ] 02-01: TBD during phase planning
+- [x] 02-01: Implement signed daily gap visualization semantics
+- [ ] 02-02: Complete day-level inspection experience for gap visualization
 
 ### Phase 3: Sleep Gap UX Clarity
 **Goal**: Users can read the new sleep-gap view quickly and correctly across supported languages.
@@ -68,5 +69,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Daily Sleep Comparison Foundation | 3/3 | Complete    | 2026-03-14 |
-| 2. Gap Insight Visualization | 0/TBD | Not started | - |
+| 2. Gap Insight Visualization | 1/2 | In Progress | - |
 | 3. Sleep Gap UX Clarity | 0/TBD | Not started | - |
