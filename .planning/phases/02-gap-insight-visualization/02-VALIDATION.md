@@ -41,8 +41,9 @@ created: 2026-03-14
 | 02-01-01 | 01 | 1 | SLPG-02 | unit/integration | `npx vitest run src/services/metrics/sleepDailyComparison.test.ts` | ✅ | ⬜ pending |
 | 02-01-02 | 01 | 1 | SLPG-02 | component | `npx vitest run src/components/charts/sleep/SleepComparisonPhase1.test.tsx` | ✅ | ⬜ pending |
 | 02-01-03 | 01 | 1 | SLPG-03 | component | `npx vitest run src/components/charts/sleep/SleepComparisonPhase1.test.tsx` | ✅ | ⬜ pending |
-| 02-02-01 | 02 | 2 | SLPG-03 | integration | `npx vitest run src/components/dashboard/hooks/*.test.ts --passWithNoTests` | ❌ | ⬜ pending |
+| 02-02-01 | 02 | 2 | SLPG-03 | component | `npx vitest run src/components/charts/sleep/SleepComparisonPhase1.test.tsx` | ✅ | ⬜ pending |
 | 02-02-02 | 02 | 2 | SLPG-03 | i18n/smoke | `npx vitest run src/components/charts/sleep/SleepComparisonPhase1.test.tsx --passWithNoTests` | ✅ | ⬜ pending |
+| 02-02-03 | 02 | 2 | SLPG-03 | component | `npx vitest run src/components/charts/sleep/SleepComparisonPhase1.test.tsx` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
