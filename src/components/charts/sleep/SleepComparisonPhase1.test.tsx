@@ -1,10 +1,18 @@
 import { act, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import "@/i18n";
+import i18next from "i18next";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { SleepChart } from "@/components/charts/sleep/SleepChart";
 import { SleepDurationChart } from "@/components/charts/sleep/SleepDurationChart";
 
 const echartsSpy = vi.fn();
+
+vi.mock("echarts", () => ({
+  connect: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
 const comparisonData = [
   {
     date: "2026-03-10",
@@ -39,7 +47,7 @@ vi.mock("echarts-for-react", () => ({
   },
 }));
 
-function renderChart() {
+function renderChart(locale = "en") {
   echartsSpy.mockClear();
 
   return render(
@@ -69,8 +77,8 @@ function renderChart() {
         markAreaData={[]}
         labelColor="#111827"
         mutedColor="#6b7280"
-        monthFormatter={new Intl.DateTimeFormat("en", { month: "short" })}
-        yearFormatter={new Intl.DateTimeFormat("en", { year: "numeric" })}
+        monthFormatter={new Intl.DateTimeFormat(locale, { month: "short" })}
+        yearFormatter={new Intl.DateTimeFormat(locale, { year: "numeric" })}
         dataExtent={{
           start: new Date("2026-03-10T00:00:00.000Z").getTime(),
           end: new Date("2026-03-12T00:00:00.000Z").getTime(),
@@ -79,6 +87,41 @@ function renderChart() {
     </ThemeProvider>,
   );
 }
+
+function renderSleepChartEmptyState() {
+  return render(
+    <ThemeProvider defaultTheme="light">
+      <SleepChart
+        data={[]}
+        comparisonData={[]}
+        comparisonSummary={{
+          totalDays: 0,
+          daysWithNeed: 0,
+          missingNeedDays: 0,
+          deficitDays: 0,
+          surplusDays: 0,
+          balancedDays: 0,
+          avgDurationSeconds: 0,
+          avgSleepNeedSeconds: null,
+          avgGapSeconds: null,
+          maxDeficitSeconds: null,
+          maxSurplusSeconds: null,
+          gapRange: {
+            min: 0,
+            max: 0,
+          },
+        }}
+        events={[]}
+        range="30d"
+        rollingWindowDays={7}
+      />
+    </ThemeProvider>,
+  );
+}
+
+beforeEach(async () => {
+  await i18next.changeLanguage("en");
+});
 
 describe("Sleep comparison signed gap chart", () => {
   it("renders a signed gap chart with zero-baseline semantics and distinct deficit/surplus styling", () => {
@@ -106,6 +149,11 @@ describe("Sleep comparison signed gap chart", () => {
           };
           itemStyle?: {
             color?: (params: { value?: [number, number | null] }) => string;
+            borderColor?: (params: { value?: [number, number | null] }) => string;
+            borderWidth?: (params: { value?: [number, number | null] }) => number;
+            borderRadius?: (
+              params: { value?: [number, number | null] },
+            ) => number[];
           };
         }>;
         yAxis: {
@@ -127,7 +175,12 @@ describe("Sleep comparison signed gap chart", () => {
       [new Date("2026-03-12").getTime(), 0],
     ]);
     expect(chartProps.option.series[0]?.markLine?.data).toEqual(
-      expect.arrayContaining([expect.objectContaining({ yAxis: 0 })]),
+      expect.arrayContaining([
+        expect.objectContaining({
+          yAxis: 0,
+          z: 10,
+        }),
+      ]),
     );
     expect(
       chartProps.option.series[0]?.itemStyle?.color?.({
@@ -139,6 +192,31 @@ describe("Sleep comparison signed gap chart", () => {
         value: [new Date("2026-03-11").getTime(), 1800],
       }),
     ).toBe("#0f766e");
+    expect(
+      chartProps.option.series[0]?.itemStyle?.borderColor?.({
+        value: [new Date("2026-03-10").getTime(), -3600],
+      }),
+    ).toBe("#991b1b");
+    expect(
+      chartProps.option.series[0]?.itemStyle?.borderColor?.({
+        value: [new Date("2026-03-11").getTime(), 1800],
+      }),
+    ).toBe("#115e59");
+    expect(
+      chartProps.option.series[0]?.itemStyle?.borderWidth?.({
+        value: [new Date("2026-03-10").getTime(), -3600],
+      }),
+    ).toBe(1.5);
+    expect(
+      chartProps.option.series[0]?.itemStyle?.borderRadius?.({
+        value: [new Date("2026-03-10").getTime(), -3600],
+      }),
+    ).toEqual([0, 0, 6, 6]);
+    expect(
+      chartProps.option.series[0]?.itemStyle?.borderRadius?.({
+        value: [new Date("2026-03-11").getTime(), 1800],
+      }),
+    ).toEqual([6, 6, 0, 0]);
   });
 
   it("shows all day-inspection fields together for available-need days after selecting a point", () => {
@@ -173,7 +251,6 @@ describe("Sleep comparison signed gap chart", () => {
       screen.getByText("Gap unavailable because sleep need is missing."),
     ).toBeInTheDocument();
     expect(screen.getByText("Time in bed: 7h45")).toBeInTheDocument();
-
   });
 
   it("keeps tooltip content complete for both available and missing-need days", () => {
@@ -200,6 +277,7 @@ describe("Sleep comparison signed gap chart", () => {
       },
     ]);
 
+    expect(surplusTooltipHtml).toContain("Effective sleep");
     expect(surplusTooltipHtml).toContain("Sleep gap");
     expect(surplusTooltipHtml).toContain("+30min (surplus)");
     expect(surplusTooltipHtml).toContain("Sleep need");
@@ -218,10 +296,61 @@ describe("Sleep comparison signed gap chart", () => {
       },
     ]);
 
+    expect(missingNeedTooltipHtml).toContain("Effective sleep");
     expect(missingNeedTooltipHtml).toContain("Sleep need");
     expect(missingNeedTooltipHtml).toContain("Need unavailable");
     expect(missingNeedTooltipHtml).toContain("Gap unavailable");
     expect(missingNeedTooltipHtml).toContain("Time in bed");
     expect(missingNeedTooltipHtml).toContain("7h45");
+  });
+
+  it("renders french sleep-gap wording consistently across the chart and day details", async () => {
+    await i18next.changeLanguage("fr");
+    renderChart("fr");
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Écart quotidien de sommeil",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByText(
+        "Écart moyen : -15min • Jours en déficit : 1 • Jours en surplus : 1 • Jours équilibrés : 0 • Besoin manquant : 1",
+      ),
+    ).toHaveLength(2);
+    expect(screen.getByText("Sommeil effectif : 7h15")).toBeInTheDocument();
+    expect(
+      screen.getByText("12 mars 2026 : besoin de sommeil indisponible dans Withings."),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("charts.sleep.effectiveSleep"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("uses the localized SleepChart empty-state path in english and french", async () => {
+    const englishView = renderSleepChartEmptyState();
+
+    expect(
+      screen.getByText(
+        "No sleep sessions are available in the selected range, so the sleep gap cannot be shown.",
+      ),
+    ).toBeInTheDocument();
+
+    englishView.unmount();
+
+    await act(async () => {
+      await i18next.changeLanguage("fr");
+    });
+
+    renderSleepChartEmptyState();
+
+    expect(
+      screen.getByText(
+        "Aucune session de sommeil n'est disponible dans la période sélectionnée, donc l'écart de sommeil ne peut pas être affiché.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("charts.sleep.sleepGapEmptyState"),
+    ).not.toBeInTheDocument();
   });
 });
