@@ -12,7 +12,7 @@ This milestone is a focused sleep-insight release: first make the day-level slee
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Daily Sleep Comparison Foundation** - Establish the canonical wake-day sleep dataset with correct duration, need, and missing-state semantics.
+- [x] **Phase 1: Daily Sleep Comparison Foundation** - Establish the canonical wake-day sleep dataset with correct duration, need, and missing-state semantics.
 - [ ] **Phase 2: Gap Insight Visualization** - Deliver the signed daily gap chart and per-day inspection model in the Sleep section.
 - [ ] **Phase 3: Sleep Gap UX Clarity** - Make the new sleep-gap experience visually obvious and fully internationalized.
 
@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-00: Establish Wave 0 validation infrastructure and baseline fixtures
 - [x] 01-01: Build canonical daily comparison parsing and aggregation contracts
-- [ ] 01-02: Integrate daily comparison data into Sleep chart rendering
+- [x] 01-02: Integrate daily comparison data into Sleep chart rendering
 
 ### Phase 2: Gap Insight Visualization
 **Goal**: Users can understand each day's sleep deficit or surplus directly from the Sleep section.
@@ -67,6 +67,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Daily Sleep Comparison Foundation | 2/3 | In Progress | 01-00, 01-01 |
+| 1. Daily Sleep Comparison Foundation | 3/3 | Complete | 01-00, 01-01, 01-02 |
 | 2. Gap Insight Visualization | 0/TBD | Not started | - |
 | 3. Sleep Gap UX Clarity | 0/TBD | Not started | - |
