@@ -372,10 +372,10 @@
       "timeInBed": "Temps au lit",
       "zeroBaseline": "Ligne zéro",
       "dayDetailTitle": "Détail du sommeil du {{date}}",
-      "dayDetailDuration": "Durée : {{duration}}",
-      "dayDetailNeed": "Besoin de sommeil : {{need}}",
+      "dayDetailDuration": "Sommeil effectif : {{duration}}",
+      "dayDetailNeed": "Besoin de sommeil selon Withings : {{need}}",
       "dayDetailNeedUnavailable": "{{date}} : besoin de sommeil indisponible dans Withings.",
-      "dayDetailGap": "Écart : {{gap}}",
+      "dayDetailGap": "Écart signé : {{gap}}",
       "dayDetailGapUnavailable": "Écart indisponible car le besoin de sommeil est manquant.",
       "dayDetailTimeInBed": "Temps au lit : {{duration}}",
       "gapState": {

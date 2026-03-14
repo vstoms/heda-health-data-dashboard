@@ -372,10 +372,10 @@
       "timeInBed": "Time in bed",
       "zeroBaseline": "Zero baseline",
       "dayDetailTitle": "{{date}} sleep detail",
-      "dayDetailDuration": "Duration: {{duration}}",
-      "dayDetailNeed": "Sleep need: {{need}}",
+      "dayDetailDuration": "Effective sleep: {{duration}}",
+      "dayDetailNeed": "Sleep need from Withings: {{need}}",
       "dayDetailNeedUnavailable": "{{date}}: sleep need unavailable from Withings.",
-      "dayDetailGap": "Gap: {{gap}}",
+      "dayDetailGap": "Signed gap: {{gap}}",
       "dayDetailGapUnavailable": "Gap unavailable because sleep need is missing.",
       "dayDetailTimeInBed": "Time in bed: {{duration}}",
       "gapState": {
