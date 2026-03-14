@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import "@/i18n";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -141,7 +141,29 @@ describe("Sleep comparison signed gap chart", () => {
     ).toBe("#0f766e");
   });
 
-  it("shows explicit gap and time-in-bed detail for deficit, surplus, and missing-need days", () => {
+  it("shows all day-inspection fields together for available-need days after selecting a point", () => {
+    renderChart();
+
+    const chartProps = echartsSpy.mock.calls[echartsSpy.mock.calls.length - 1]?.[0] as {
+      onEvents: {
+        click: (params: { value?: [number, number | null] }) => void;
+      };
+    };
+
+    act(() => {
+      chartProps.onEvents.click({
+        value: [new Date("2026-03-11").getTime(), 1800],
+      });
+    });
+
+    expect(screen.getByText("Mar 11, 2026 sleep detail")).toBeInTheDocument();
+    expect(screen.getByText("Effective sleep: 8h30")).toBeInTheDocument();
+    expect(screen.getByText("Sleep need from Withings: 8h")).toBeInTheDocument();
+    expect(screen.getByText("Signed gap: +30min (surplus)")).toBeInTheDocument();
+    expect(screen.getByText("Time in bed: 9h")).toBeInTheDocument();
+  });
+
+  it("keeps explicit missing-need messaging and non-computed gap handling for unavailable days", () => {
     renderChart();
 
     expect(
@@ -151,6 +173,11 @@ describe("Sleep comparison signed gap chart", () => {
       screen.getByText("Gap unavailable because sleep need is missing."),
     ).toBeInTheDocument();
     expect(screen.getByText("Time in bed: 7h45")).toBeInTheDocument();
+
+  });
+
+  it("keeps tooltip content complete for both available and missing-need days", () => {
+    renderChart();
 
     const chartProps = echartsSpy.mock.calls[echartsSpy.mock.calls.length - 1]?.[0] as {
       option: {
@@ -175,6 +202,8 @@ describe("Sleep comparison signed gap chart", () => {
 
     expect(surplusTooltipHtml).toContain("Sleep gap");
     expect(surplusTooltipHtml).toContain("+30min (surplus)");
+    expect(surplusTooltipHtml).toContain("Sleep need");
+    expect(surplusTooltipHtml).toContain("8h");
     expect(surplusTooltipHtml).toContain("Time in bed");
     expect(surplusTooltipHtml).toContain("9h");
 
@@ -192,5 +221,7 @@ describe("Sleep comparison signed gap chart", () => {
     expect(missingNeedTooltipHtml).toContain("Sleep need");
     expect(missingNeedTooltipHtml).toContain("Need unavailable");
     expect(missingNeedTooltipHtml).toContain("Gap unavailable");
+    expect(missingNeedTooltipHtml).toContain("Time in bed");
+    expect(missingNeedTooltipHtml).toContain("7h45");
   });
 });
