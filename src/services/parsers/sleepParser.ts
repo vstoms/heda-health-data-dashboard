@@ -14,6 +14,13 @@ function toNonNegativeInt(value: string | undefined): number {
   return parsed;
 }
 
+function toOptionalNonNegativeInt(value: string | undefined): number | null {
+  if (!value) return null;
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return null;
+  return parsed;
+}
+
 function pickFirstValue(
   row: Record<string, string>,
   keys: string[],
@@ -169,6 +176,14 @@ export async function parseSleepData(zip: JSZip): Promise<SleepData[]> {
       const rawDuration = toNonNegativeInt(
         pickFirstValue(row, ["Sleep duration (s)", "duration", "Duration"]),
       );
+      const sleepNeed = toOptionalNonNegativeInt(
+        pickFirstValue(row, [
+          "Sleep need (s)",
+          "Sleep need",
+          "sleepNeed",
+          "sleep_need",
+        ]),
+      );
 
       // Golden Rule #1: interpolate missing sleep duration from sleep phases (excluding awake).
       const effectiveSleepSeconds =
@@ -202,6 +217,7 @@ export async function parseSleepData(zip: JSZip): Promise<SleepData[]> {
         end,
         // Golden Rule #3: keep duration as effective sleep (awake excluded).
         duration: effectiveSleepSeconds,
+        sleepNeed,
         deepSleep,
         lightSleep,
         remSleep,

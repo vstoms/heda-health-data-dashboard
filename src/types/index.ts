@@ -11,6 +11,7 @@ export interface SleepData {
   start: string;
   end: string;
   duration: number;
+  sleepNeed?: number | null;
   deepSleep?: number;
   lightSleep?: number;
   remSleep?: number;
