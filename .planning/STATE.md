@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-13T22:01:16.917Z"
-last_activity: 2026-03-13 - Created roadmap, initialized state, and mapped all v1 requirements to phases.
+status: in_progress
+stopped_at: Completed 01-00-PLAN.md
+last_updated: "2026-03-14T07:56:15.131Z"
+last_activity: 2026-03-14 - Executed plan 01-00 and established Wave 0 validation for parser, metrics, and chart contracts.
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 3
+  completed_plans: 1
+  percent: 33
 ---
 
 # Project State
@@ -26,27 +26,27 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 ## Current Position
 
 Phase: 1 of 3 (Daily Sleep Comparison Foundation)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-13 - Created roadmap, initialized state, and mapped all v1 requirements to phases.
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-03-14 - Executed plan 01-00 and established Wave 0 validation for parser, metrics, and chart contracts.
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 33%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: 0 min
-- Total execution time: 0.0 hours
+- Total plans completed: 1
+- Average duration: 3 min
+- Total execution time: 0.1 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01 | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: none
+- Last 5 plans: 01-00 (3 min)
 - Trend: Stable
 
 ## Accumulated Context
@@ -59,6 +59,8 @@ Recent decisions affecting current work:
 - Phase 1: Start with canonical wake-day sleep comparison data so later UI work inherits the project's sleep parsing rules.
 - Phase 2: Deliver the signed daily gap view and per-day inspection as one coherent user workflow.
 - Phase 3: Keep final-phase scope on visual clarity and i18n rather than unrelated dashboard redesign.
+- [Phase 01]: Use a test-only daily comparison contract harness in plan 00, then swap to the production service in plan 01-01.
+- [Phase 01]: Mock echarts-for-react in the baseline component harness so Wave 0 checks stay fast and deterministic in jsdom.
 
 ### Pending Todos
 
@@ -70,6 +72,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T22:01:16.916Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-daily-sleep-comparison-foundation/01-CONTEXT.md
+Last session: 2026-03-14T07:55:58.187Z
+Stopped at: Completed 01-00-PLAN.md
+Resume file: .planning/phases/01-daily-sleep-comparison-foundation/01-01-PLAN.md

@@ -9,16 +9,16 @@ Requirements for this milestone release. Each maps to roadmap phases.
 
 ### Sleep Gap Visualization
 
-- [ ] **SLPG-01**: User can view a daily chart in the Sleep section with sleep duration and sleep need values.
+- [x] **SLPG-01**: User can view a daily chart in the Sleep section with sleep duration and sleep need values.
 - [ ] **SLPG-02**: User can see signed daily gap (`duration - need`) clearly as deficit or surplus.
 - [ ] **SLPG-03**: User can inspect per-day details showing effective sleep duration, sleep need, gap, and time in bed.
 
 ### Sleep Data Correctness
 
-- [ ] **SLPD-01**: Overnight sleep sessions are attributed to the wake day in daily aggregation.
-- [ ] **SLPD-02**: Effective sleep duration excludes awake time in all charted sleep-duration values.
-- [ ] **SLPD-03**: If base sleep duration is missing or zero, duration is derived from sleep phases (light + deep + REM) per existing rules.
-- [ ] **SLPD-04**: When sleep need is unavailable for a day, UI shows an explicit missing state rather than treating need as zero.
+- [x] **SLPD-01**: Overnight sleep sessions are attributed to the wake day in daily aggregation.
+- [x] **SLPD-02**: Effective sleep duration excludes awake time in all charted sleep-duration values.
+- [x] **SLPD-03**: If base sleep duration is missing or zero, duration is derived from sleep phases (light + deep + REM) per existing rules.
+- [x] **SLPD-04**: When sleep need is unavailable for a day, UI shows an explicit missing state rather than treating need as zero.
 
 ### UX and Internationalization
 
@@ -51,13 +51,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SLPG-01 | Phase 1 | Pending |
+| SLPG-01 | Phase 1 | Complete |
 | SLPG-02 | Phase 2 | Pending |
 | SLPG-03 | Phase 2 | Pending |
-| SLPD-01 | Phase 1 | Pending |
-| SLPD-02 | Phase 1 | Pending |
-| SLPD-03 | Phase 1 | Pending |
-| SLPD-04 | Phase 1 | Pending |
+| SLPD-01 | Phase 1 | Complete |
+| SLPD-02 | Phase 1 | Complete |
+| SLPD-03 | Phase 1 | Complete |
+| SLPD-04 | Phase 1 | Complete |
 | SLPU-01 | Phase 3 | Pending |
 | SLPU-02 | Phase 3 | Pending |
 
@@ -68,4 +68,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 after roadmap creation*
+*Last updated: 2026-03-14 after completing plan 01-00*

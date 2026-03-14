@@ -27,10 +27,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User sees effective sleep duration values that exclude awake time everywhere the new daily comparison data is displayed.
   3. User still sees a daily duration value for nights where the source duration is missing or zero because the app derives it from light, deep, and REM phases.
   4. User sees an explicit missing sleep-need state for days without a Withings need value instead of a fabricated zero target.
-**Plans**: TBD
+**Plans**: 3
 
 Plans:
-- [ ] 01-01: TBD during phase planning
+- [x] 01-00: Establish Wave 0 validation infrastructure and baseline fixtures
+- [ ] 01-01: Build canonical daily comparison parsing and aggregation contracts
+- [ ] 01-02: Integrate daily comparison data into Sleep chart rendering
 
 ### Phase 2: Gap Insight Visualization
 **Goal**: Users can understand each day's sleep deficit or surplus directly from the Sleep section.
@@ -65,6 +67,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Daily Sleep Comparison Foundation | 0/TBD | Not started | - |
+| 1. Daily Sleep Comparison Foundation | 1/3 | In Progress | 01-00 |
 | 2. Gap Insight Visualization | 0/TBD | Not started | - |
 | 3. Sleep Gap UX Clarity | 0/TBD | Not started | - |
