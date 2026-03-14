@@ -10,11 +10,13 @@ import { computeAverageTime } from "@/lib/sleepUtils";
 import { averageMetric } from "@/lib/statistics";
 import { filterByRange } from "@/lib/time";
 import {
+  buildDailySleepComparison,
   calculateDayTypeStats,
   calculateEventStats,
   calculateSeasonStats,
   calculateSleepStats,
 } from "@/services/metrics";
+import type { DailySleepComparisonPoint } from "@/services/metrics";
 import type {
   ActivityData,
   BloodPressureData,
@@ -53,6 +55,9 @@ export interface DashboardMetricsResult {
   rangeSleepData: SleepData[];
   rangeSleepDataProcessed: SleepData[];
   allSleepDataProcessed: SleepData[];
+  rangeSleepComparisonData: DailySleepComparisonPoint[];
+  allSleepComparisonData: DailySleepComparisonPoint[];
+  sleepComparisonSummary: SleepComparisonSummary;
   rangeWeightData: WeightData[];
   hasSeasonData: boolean;
   hasDayTypeData: boolean;
@@ -68,6 +73,15 @@ export interface DashboardMetricsResult {
   dayTypeMagnitudeRanges: ReturnType<typeof buildMagnitudeRanges>;
 }
 
+export interface SleepComparisonSummary {
+  totalDays: number;
+  daysWithNeed: number;
+  missingNeedDays: number;
+  avgDurationSeconds: number | null;
+  avgSleepNeedSeconds: number | null;
+  avgGapSeconds: number | null;
+}
+
 function filterRangeData<T>(
   items: T[],
   getDate: (item: T) => Date,
@@ -75,6 +89,42 @@ function filterRangeData<T>(
   customRange: DateRangeWindow | null,
 ) {
   return filterByRange(items, getDate, range, customRange);
+}
+
+function averageNullable(values: number[]): number | null {
+  if (values.length === 0) {
+    return null;
+  }
+
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function summarizeSleepComparison(
+  points: DailySleepComparisonPoint[],
+): SleepComparisonSummary {
+  const comparablePoints = points.filter(
+    (point) =>
+      point.sleepNeedSeconds !== null && point.gapSeconds !== null,
+  );
+
+  return {
+    totalDays: points.length,
+    daysWithNeed: comparablePoints.length,
+    missingNeedDays: points.filter((point) => point.sleepNeedMissing).length,
+    avgDurationSeconds: averageNullable(
+      points.map((point) => point.durationSeconds),
+    ),
+    avgSleepNeedSeconds: averageNullable(
+      comparablePoints
+        .map((point) => point.sleepNeedSeconds)
+        .filter((value): value is number => value !== null),
+    ),
+    avgGapSeconds: averageNullable(
+      comparablePoints
+        .map((point) => point.gapSeconds)
+        .filter((value): value is number => value !== null),
+    ),
+  };
 }
 
 export function useDashboardMetrics(
@@ -157,6 +207,39 @@ export function useDashboardMetrics(
       ),
     [customRange, range, weightData],
   );
+
+  const rangeSleepComparisonData = useMemo(
+    () =>
+      buildDailySleepComparison(rangeSleepData, {
+        includeNaps: true,
+        mode: sleepCountingMode,
+      }),
+    [rangeSleepData, sleepCountingMode],
+  );
+
+  const allSleepComparisonData = useMemo(
+    () =>
+      buildDailySleepComparison(analysisSleepData, {
+        includeNaps: true,
+        mode: sleepCountingMode,
+      }),
+    [analysisSleepData, sleepCountingMode],
+  );
+
+  const sleepComparisonSummary = useMemo(() => {
+    const summaryPoints = excludeWeekends
+      ? rangeSleepComparisonData.filter((point) => {
+          const day = new Date(point.date).getDay();
+          return !weekendDaySet.has(day);
+        })
+      : rangeSleepComparisonData;
+
+    return summarizeSleepComparison(summaryPoints);
+  }, [
+    excludeWeekends,
+    rangeSleepComparisonData,
+    weekendDaySet,
+  ]);
 
   const hasRangeData =
     rangeStepsData.length > 0 ||
@@ -307,6 +390,9 @@ export function useDashboardMetrics(
     rangeSleepData,
     rangeSleepDataProcessed,
     allSleepDataProcessed,
+    rangeSleepComparisonData,
+    allSleepComparisonData,
+    sleepComparisonSummary,
     rangeWeightData,
     hasSeasonData: hasRangeData,
     hasDayTypeData: hasRangeData,
