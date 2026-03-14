@@ -1,45 +1,45 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: completed
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-03-14T09:15:15.724Z"
-last_activity: 2026-03-14 - Executed plan 03-01 and finalized localized sleep-gap clarity with stronger signed-gap semantics.
+milestone: v1.1.0
+milestone_name: next milestone planning
+status: ready_for_planning
+stopped_at: Milestone v1.0.0 archived and phase history moved to milestones directory
+last_updated: "2026-03-14T10:35:00.000Z"
+last_activity: 2026-03-14 - Completed v1.0.0 archival workflow, updated roadmap/project state, and prepared v1.1.0 planning baseline.
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13)
+See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Users can quickly understand whether they are meeting their sleep needs, especially by seeing daily sleep deficit or surplus clearly.
-**Current focus:** Milestone complete
+**Current focus:** Plan v1.1.0 scope and requirements
 
 ## Current Position
 
-Phase: 3 of 3 (Sleep Gap UX Clarity)
-Plan: 1 of 1 executed in current phase
-Status: Phase 3 complete; milestone implementation finished
-Last activity: 2026-03-14 - Executed plan 03-01 and finalized localized sleep-gap clarity with stronger signed-gap semantics.
+Phase: Not started (v1.1.0 planning)
+Plan: Not started
+Status: Milestone v1.0.0 shipped and archived; ready for next planning cycle
+Last activity: 2026-03-14 - Completed v1.0.0 archival workflow, updated roadmap/project state, and prepared v1.1.0 planning baseline.
 
-Progress: [██████████] 100%
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Last milestone plans completed: 6 (v1.0.0)
 - Average duration: 6 min
 - Total execution time: 0.6 hours
 
-**By Phase:**
+**Last Milestone (v1.0.0):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
@@ -59,34 +59,23 @@ Progress: [██████████] 100%
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+Latest milestone decisions:
 
-- Phase 1: Start with canonical wake-day sleep comparison data so later UI work inherits the project's sleep parsing rules.
-- Phase 2: Deliver the signed daily gap view and per-day inspection as one coherent user workflow.
-- Phase 3: Keep final-phase scope on visual clarity and i18n rather than unrelated dashboard redesign.
-- [Phase 01]: Use a test-only daily comparison contract harness in plan 00, then swap to the production service in plan 01-01.
-- [Phase 01]: Mock echarts-for-react in the baseline component harness so Wave 0 checks stay fast and deterministic in jsdom.
-- [Phase 01]: Canonical daily comparison points carry nullable sleep-need and gap fields so missing need is explicit instead of coerced to zero.
-- [Phase 01]: Daily comparison duration is derived from overlap-aware interval aggregation while preserving effective-sleep semantics by excluding awake time.
-- [Phase 01-daily-sleep-comparison-foundation]: The dashboard hook owns duration-vs-need series construction and missing-need summary aggregation so chart components stay presentation-focused.
-- [Phase 01-daily-sleep-comparison-foundation]: Phase 1 shows duration and sleep need as neutral daily series while reserving signed-gap visual semantics for Phase 2.
-- [Phase 02-gap-insight-visualization]: Converted the sleep comparison chart to a signed zero-baseline gap view so deficit and surplus are readable without comparing two neutral lines.
-- [Phase 02-gap-insight-visualization]: Missing sleep-need days remain visible as unavailable markers and never become fabricated zero-gap values.
-- [Phase 02-gap-insight-visualization]: Keep the latest visible day selected on first render, but when filtering hides it fall back to the latest visible day with available sleep-need data before using an unavailable point.
-- [Phase 02-gap-insight-visualization]: Clarify the inspection panel wording for effective sleep, Withings sleep need, signed gap, and time in bed while leaving broader chart-label polish to Phase 3.
-- [Phase 03-sleep-gap-ux-clarity]: Use a dedicated sleep-gap empty-state string so the SleepChart path stays aligned with the signed-gap experience.
-- [Phase 03-sleep-gap-ux-clarity]: Reinforce deficit-versus-surplus meaning with sign-specific bar borders and rounded shapes instead of adding new chart metrics or series.
+- Keep sleep need nullable end-to-end to preserve explicit missing-source semantics.
+- Render signed gap around a visible zero baseline for instant deficit/surplus readability.
+- Preserve missing need as visible unavailable markers rather than fabricated balanced gaps.
+- Align sleep-gap terminology across chart, tooltip, details, and empty states in EN/FR.
 
 ### Pending Todos
 
-None yet.
+- Define v1.1.0 milestone goals and active requirements.
 
 ### Blockers/Concerns
 
-None yet.
+None.
 
 ## Session Continuity
 
-Last session: 2026-03-14T09:12:01.695Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-03-14T10:35:00.000Z
+Stopped at: Milestone v1.0.0 completion workflow finalized
 Resume file: None
