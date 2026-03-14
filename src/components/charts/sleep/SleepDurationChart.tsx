@@ -34,6 +34,22 @@ function formatGapDuration(valueSeconds: number): string {
   return `${prefix}${formatSleepDuration(Math.abs(valueSeconds))}`;
 }
 
+function getGapState(point: DailySleepComparisonPoint) {
+  if (point.gapSeconds === null) {
+    return "unavailable" as const;
+  }
+
+  if (point.gapSeconds > 0) {
+    return "surplus" as const;
+  }
+
+  if (point.gapSeconds < 0) {
+    return "deficit" as const;
+  }
+
+  return "balanced" as const;
+}
+
 export function SleepDurationChart({
   comparisonData,
   visibleComparisonData,
@@ -94,25 +110,45 @@ export function SleepDurationChart({
   );
 
   const durationAxisInterval = 30 * 60;
-  const durationValues = chartData.map((point) => point.durationSeconds);
-  const needValues = chartData
-    .map((point) => point.sleepNeedSeconds)
+  const gapValues = chartData
+    .map((point) => point.gapSeconds)
     .filter((value): value is number => value !== null);
-  const axisValues = [...durationValues, ...needValues];
-
-  const durationMin = axisValues.length > 0 ? Math.min(...axisValues) : 0;
-  const durationMax = axisValues.length > 0 ? Math.max(...axisValues) : 0;
+  const gapMin =
+    gapValues.length > 0 ? Math.min(...gapValues, 0) : comparisonSummary.gapRange.min;
+  const gapMax =
+    gapValues.length > 0 ? Math.max(...gapValues, 0) : comparisonSummary.gapRange.max;
 
   const alignDurationMin = (value: number) =>
-    Math.max(
-      0,
-      Math.floor(value / durationAxisInterval) * durationAxisInterval,
-    );
+    Math.floor(value / durationAxisInterval) * durationAxisInterval;
   const alignDurationMax = (value: number) =>
     Math.ceil(value / durationAxisInterval) * durationAxisInterval;
+  const gapLabel = t("charts.sleep.sleepGap");
+  const missingNeedLabel = t("charts.sleep.needUnavailable");
+  const zeroBaseline = {
+    name: t("charts.sleep.zeroBaseline"),
+    yAxis: 0,
+    lineStyle: {
+      color: theme === "dark" ? "#e5e7eb" : "#111827",
+      width: 2,
+      type: "solid",
+    },
+    label: {
+      show: false,
+    },
+  };
 
-  const durationLabel = t("charts.sleep.duration");
-  const sleepNeedLabel = t("charts.sleep.sleepNeed");
+  const gapSummaryText =
+    comparisonSummary.avgGapSeconds === null
+      ? t("charts.sleep.sleepGapSummaryUnavailable", {
+          missingDays: comparisonSummary.missingNeedDays,
+        })
+      : t("charts.sleep.sleepGapSummary", {
+          avgGap: formatGapDuration(comparisonSummary.avgGapSeconds),
+          deficitDays: comparisonSummary.deficitDays,
+          surplusDays: comparisonSummary.surplusDays,
+          balancedDays: comparisonSummary.balancedDays,
+          missingDays: comparisonSummary.missingNeedDays,
+        });
 
   const option = {
     backgroundColor: "transparent",
@@ -141,16 +177,31 @@ export function SleepDurationChart({
         return createChartTooltip(formatDate(point.date), [
           {
             marker: points[0]?.marker,
-            label: durationLabel,
+            label: t("charts.sleep.duration"),
             value: formatSleepDuration(point.durationSeconds),
           },
           {
-            marker: points[1]?.marker,
-            label: sleepNeedLabel,
+            marker: points[1]?.marker ?? points[0]?.marker,
+            label: t("charts.sleep.sleepNeed"),
             value:
               point.sleepNeedSeconds === null
                 ? t("charts.sleep.needUnavailable")
                 : formatSleepDuration(point.sleepNeedSeconds),
+          },
+          {
+            marker: points[0]?.marker,
+            label: gapLabel,
+            value:
+              point.gapSeconds === null
+                ? t("charts.sleep.gapUnavailable")
+                : `${formatGapDuration(point.gapSeconds)} (${t(
+                    `charts.sleep.gapState.${getGapState(point)}`,
+                  )})`,
+          },
+          {
+            marker: points[0]?.marker,
+            label: t("charts.sleep.timeInBed"),
+            value: formatSleepDuration(point.timeInBedSeconds),
           },
         ]);
       },
@@ -185,15 +236,15 @@ export function SleepDurationChart({
     ],
     yAxis: {
       type: "value",
-      name: t("charts.sleep.durationVsNeedAxis"),
+      name: t("charts.sleep.sleepGapAxis"),
       nameTextStyle: { color: labelColor },
       scale: true,
-      min: alignDurationMin(durationMin),
-      max: alignDurationMax(durationMax),
+      min: alignDurationMin(gapMin),
+      max: alignDurationMax(gapMax),
       interval: durationAxisInterval,
       axisLabel: {
         color: mutedColor,
-        formatter: (value: number) => formatSleepDuration(value),
+        formatter: (value: number) => formatGapDuration(value),
       },
       axisLine: { show: true, lineStyle: { color: mutedColor } },
       splitLine: {
@@ -233,42 +284,54 @@ export function SleepDurationChart({
     ],
     series: [
       {
-        name: durationLabel,
-        type: "line",
+        name: gapLabel,
+        type: "bar",
         data: comparisonData.map((point) => [
           new Date(point.date).getTime(),
-          point.durationSeconds,
+          point.gapSeconds,
         ]),
-        smooth: false,
+        barMaxWidth: 18,
         showSymbol: true,
-        symbolSize: 7,
-        itemStyle: { color: "#0f766e" },
-        lineStyle: { width: 3, color: "#0f766e" },
+        itemStyle: {
+          color: (params: { value?: [number, number | null] }) => {
+            const value = params.value?.[1];
+
+            if (typeof value !== "number") {
+              return theme === "dark" ? "#94a3b8" : "#9ca3af";
+            }
+
+            if (value > 0) {
+              return "#0f766e";
+            }
+
+            if (value < 0) {
+              return "#dc2626";
+            }
+
+            return "#475569";
+          },
+          borderRadius: [6, 6, 0, 0],
+        },
         markLine:
-          markLineData.length > 0
-            ? {
-                symbol: ["none", "none"],
-                data: markLineData,
-              }
-            : undefined,
+          {
+            symbol: ["none", "none"],
+            data: [zeroBaseline, ...markLineData],
+          },
         markArea:
           markAreaData.length > 0
             ? { data: markAreaData, label: { show: true, color: labelColor } }
             : undefined,
       },
       {
-        name: sleepNeedLabel,
-        type: "line",
-        data: comparisonData.map((point) => [
-          new Date(point.date).getTime(),
-          point.sleepNeedSeconds,
-        ]),
-        smooth: false,
-        connectNulls: false,
+        name: missingNeedLabel,
+        type: "scatter",
+        data: comparisonData
+          .filter((point) => point.gapSeconds === null)
+          .map((point) => [new Date(point.date).getTime(), 0]),
+        symbol: "diamond",
         showSymbol: true,
-        symbolSize: 7,
-        itemStyle: { color: "#d97706" },
-        lineStyle: { width: 2, type: "dashed", color: "#d97706" },
+        symbolSize: 10,
+        itemStyle: { color: theme === "dark" ? "#cbd5e1" : "#64748b" },
       },
     ],
   };
@@ -322,24 +385,8 @@ export function SleepDurationChart({
     }
   };
 
-  const chartTitle = t("charts.sleep.durationVsNeedHeader");
-  const summaryText =
-    comparisonSummary.avgSleepNeedSeconds === null
-      ? t("charts.sleep.durationVsNeedSummaryUnavailable", {
-          duration:
-            comparisonSummary.avgDurationSeconds === null
-              ? t("common.noData")
-              : formatSleepDuration(comparisonSummary.avgDurationSeconds),
-          missingDays: comparisonSummary.missingNeedDays,
-        })
-      : t("charts.sleep.durationVsNeedSummary", {
-          duration:
-            comparisonSummary.avgDurationSeconds === null
-              ? t("common.noData")
-              : formatSleepDuration(comparisonSummary.avgDurationSeconds),
-          need: formatSleepDuration(comparisonSummary.avgSleepNeedSeconds),
-          missingDays: comparisonSummary.missingNeedDays,
-        });
+  const chartTitle = t("charts.sleep.sleepGapHeader");
+  const summaryText = gapSummaryText;
 
   return (
     <Card>
@@ -350,7 +397,7 @@ export function SleepDurationChart({
       <CardContent className="space-y-4">
         <ChartAccessibility
           title={chartTitle}
-          description={t("charts.sleep.durationVsNeedAccessibilityDesc")}
+          description={t("charts.sleep.sleepGapAccessibilityDesc")}
           summary={summaryText}
         />
         <div role="img" aria-label={getChartAriaLabel(chartTitle)}>
@@ -394,13 +441,20 @@ export function SleepDurationChart({
                       need: formatSleepDuration(selectedPoint.sleepNeedSeconds),
                     })}
               </div>
-              {selectedPoint.gapSeconds !== null ? (
-                <div>
-                  {t("charts.sleep.dayDetailGap", {
-                    gap: formatGapDuration(selectedPoint.gapSeconds),
-                  })}
-                </div>
-              ) : null}
+              <div>
+                {selectedPoint.gapSeconds === null
+                  ? t("charts.sleep.dayDetailGapUnavailable")
+                  : t("charts.sleep.dayDetailGap", {
+                      gap: `${formatGapDuration(selectedPoint.gapSeconds)} (${t(
+                        `charts.sleep.gapState.${getGapState(selectedPoint)}`,
+                      )})`,
+                    })}
+              </div>
+              <div>
+                {t("charts.sleep.dayDetailTimeInBed", {
+                  duration: formatSleepDuration(selectedPoint.timeInBedSeconds),
+                })}
+              </div>
             </div>
           </div>
         ) : null}

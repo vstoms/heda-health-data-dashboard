@@ -105,7 +105,7 @@ export function SleepChart({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{t("charts.sleep.durationTitle")}</CardTitle>
+          <CardTitle>{t("charts.sleep.sleepGapHeader")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-sm text-muted-foreground">
@@ -163,8 +163,16 @@ export function SleepChart({
     visibleTimePoints.map((d) => d.asleep),
   );
   const avgWakeTime = computeAverageTime(visibleTimePoints.map((d) => d.wake));
-  const rangeStart = new Date(sortedData[0].date);
-  const rangeEnd = new Date(sortedData[sortedData.length - 1].date);
+  const comparisonRangeStart =
+    sortedComparisonData.length > 0
+      ? new Date(sortedComparisonData[0].date)
+      : new Date(sortedData[0].date);
+  const comparisonRangeEnd =
+    sortedComparisonData.length > 0
+      ? new Date(sortedComparisonData[sortedComparisonData.length - 1].date)
+      : new Date(sortedData[sortedData.length - 1].date);
+  const rangeStart = comparisonRangeStart;
+  const rangeEnd = comparisonRangeEnd;
   const dataExtentStart = rangeStart.getTime();
   const dataExtentEnd = rangeEnd.getTime();
   const { markLineData, markAreaData } = buildEventMarks(
