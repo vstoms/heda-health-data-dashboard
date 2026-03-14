@@ -8,6 +8,7 @@ import { SleepDurationToSleepChart } from "@/components/charts/sleep/SleepDurati
 import { SleepDurationToWakeUpChart } from "@/components/charts/sleep/SleepDurationToWakeUpChart";
 import { SleepHrAverageChart } from "@/components/charts/sleep/SleepHrAverageChart";
 import { SleepTimesChart } from "@/components/charts/sleep/SleepTimesChart";
+import type { SleepComparisonSummary } from "@/components/dashboard/hooks/useDashboardMetrics";
 import type { DoubleTrackerStats } from "@/components/dashboard/types";
 import { SleepDoubleTrackerDelta } from "@/components/SleepDoubleTrackerDelta";
 import { useTheme } from "@/components/ThemeProvider";
@@ -20,11 +21,14 @@ import {
   shiftNightSeconds,
   toSecondsOfDay,
 } from "@/lib/sleepUtils";
-import { computeRollingAverageWithExclusions, filterByRange } from "@/lib/time";
+import { filterByRange } from "@/lib/time";
+import type { DailySleepComparisonPoint } from "@/services/metrics";
 import type { PatternEvent, SleepData } from "@/types";
 
 interface SleepChartProps {
   data: SleepData[];
+  comparisonData: DailySleepComparisonPoint[];
+  comparisonSummary: SleepComparisonSummary;
   events: PatternEvent[];
   range: DateRangeOption;
   rollingWindowDays: number;
@@ -36,6 +40,8 @@ interface SleepChartProps {
 
 export function SleepChart({
   data,
+  comparisonData,
+  comparisonSummary,
   events,
   range,
   rollingWindowDays,
@@ -120,36 +126,18 @@ export function SleepChart({
     range,
     customRange,
   );
-  const points = sortedData.map((d) => ({
-    date: new Date(d.date),
-    value: d.duration,
-  }));
+  const sortedComparisonData = [...comparisonData].sort((left, right) =>
+    left.date.localeCompare(right.date),
+  );
+  const visibleComparisonData = filterByRange(
+    sortedComparisonData,
+    (point) => new Date(point.date),
+    range,
+    customRange,
+  );
   const rollingExcludeSet = new Set(rollingExcludeDays ?? []);
   const shouldIncludeInRolling = (date: Date) =>
     !rollingExcludeSet.has(date.getDay());
-  const computeRollingValues = (
-    values: Array<{ date: Date; value: number }>,
-    windowDays: number = 7,
-  ) =>
-    computeRollingAverageWithExclusions(values, windowDays, rollingExcludeDays);
-
-  const rolling = computeRollingValues(points, rollingWindowDays);
-  const visiblePoints = visibleData.map((d) => ({
-    date: new Date(d.date),
-    value: d.duration,
-  }));
-  const visibleRolling =
-    visiblePoints.length > 0
-      ? computeRollingValues(visiblePoints, rollingWindowDays)
-      : [];
-  const avgDurationValues = visibleRolling
-    .map((d) => d.value)
-    .filter((value): value is number => typeof value === "number");
-  const avgDurationSeconds =
-    avgDurationValues.length > 0
-      ? avgDurationValues.reduce((sum, value) => sum + value, 0) /
-        avgDurationValues.length
-      : 0;
   const timePoints = sortedData.map((d) => ({
     date: new Date(d.date),
     asleep: toSecondsOfDay(new Date(d.start)),
@@ -175,8 +163,8 @@ export function SleepChart({
     visibleTimePoints.map((d) => d.asleep),
   );
   const avgWakeTime = computeAverageTime(visibleTimePoints.map((d) => d.wake));
-  const rangeStart = points[0].date;
-  const rangeEnd = points[points.length - 1].date;
+  const rangeStart = new Date(sortedData[0].date);
+  const rangeEnd = new Date(sortedData[sortedData.length - 1].date);
   const dataExtentStart = rangeStart.getTime();
   const dataExtentEnd = rangeEnd.getTime();
   const { markLineData, markAreaData } = buildEventMarks(
@@ -198,10 +186,10 @@ export function SleepChart({
     if (range === "custom") {
       return customRange
         ? { start: customRange.start, end: customRange.end }
-        : { start: points[0].date, end: points[points.length - 1].date };
+        : { start: rangeStart, end: rangeEnd };
     }
     if (range === "all") {
-      return { start: points[0].date, end: points[points.length - 1].date };
+      return { start: rangeStart, end: rangeEnd };
     }
     const maxDate = new Date(sortedData[sortedData.length - 1].date);
     const start = new Date(maxDate.getTime());
@@ -209,7 +197,6 @@ export function SleepChart({
     start.setMonth(start.getMonth() - months);
     return { start, end: maxDate };
   })();
-  const rollingLabel = t("charts.rollingLabel", { count: rollingWindowDays });
   const eventMarkAreaData = markAreaData.length > 0 ? markAreaData : undefined;
 
   const asleepSeries: Array<[number, number | null]> = rollingAsleep.map(
@@ -301,10 +288,9 @@ export function SleepChart({
   return (
     <div className="space-y-6">
       <SleepDurationChart
-        rolling={rolling}
-        visibleRolling={visibleRolling}
-        avgDurationSeconds={avgDurationSeconds}
-        rollingWindowDays={rollingWindowDays}
+        comparisonData={sortedComparisonData}
+        visibleComparisonData={visibleComparisonData}
+        comparisonSummary={comparisonSummary}
         rangeWindow={rangeWindow}
         markLineData={markLineData}
         markAreaData={markAreaData}
@@ -316,7 +302,18 @@ export function SleepChart({
         onChartReady={(chart) => {
           durationChartRef.current = chart;
         }}
-        dataExtent={{ start: dataExtentStart, end: dataExtentEnd }}
+        dataExtent={{
+          start:
+            sortedComparisonData.length > 0
+              ? new Date(sortedComparisonData[0].date).getTime()
+              : dataExtentStart,
+          end:
+            sortedComparisonData.length > 0
+              ? new Date(
+                  sortedComparisonData[sortedComparisonData.length - 1].date,
+                ).getTime()
+              : dataExtentEnd,
+        }}
       />
 
       <SleepTimesChart

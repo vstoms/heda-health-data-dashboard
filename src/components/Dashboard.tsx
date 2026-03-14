@@ -132,6 +132,8 @@ export function Dashboard({
             stepsData={metrics.stepsData}
             allSleepData={metrics.sleepData}
             allSleepDataProcessed={metrics.allSleepDataProcessed}
+            allSleepComparisonData={metrics.allSleepComparisonData}
+            sleepComparisonSummary={metrics.sleepComparisonSummary}
             weightData={metrics.weightData}
             bpData={metrics.bpData}
             heightData={metrics.heightData}

@@ -21,9 +21,11 @@ import type {
   DoubleTrackerStats,
   SleepCountingMode,
 } from "@/components/dashboard/types";
+import type { SleepComparisonSummary } from "@/components/dashboard/hooks/useDashboardMetrics";
 import { Button } from "@/components/ui/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import type { DateRangeOption } from "@/lib/constants";
+import type { DailySleepComparisonPoint } from "@/services/metrics";
 import type {
   ActivityData,
   BloodPressureData,
@@ -45,6 +47,8 @@ interface DashboardTabsProps {
   stepsData: StepData[];
   allSleepData: SleepData[];
   allSleepDataProcessed: SleepData[];
+  allSleepComparisonData: DailySleepComparisonPoint[];
+  sleepComparisonSummary: SleepComparisonSummary;
   weightData: WeightData[];
   bpData: BloodPressureData[];
   heightData: HeightData[];
@@ -79,6 +83,8 @@ export function DashboardTabs({
   stepsData,
   allSleepData,
   allSleepDataProcessed,
+  allSleepComparisonData,
+  sleepComparisonSummary,
   weightData,
   bpData,
   heightData,
@@ -181,6 +187,8 @@ export function DashboardTabs({
           <SleepDebtCard sleepData={allSleepDataProcessed} className="mb-6" />
           <SleepChart
             data={allSleepDataProcessed}
+            comparisonData={allSleepComparisonData}
+            comparisonSummary={sleepComparisonSummary}
             events={events}
             range={range}
             rollingWindowDays={rollingWindowDays}
@@ -255,6 +263,7 @@ export function DashboardTabs({
     );
   }, [
     allSleepData,
+    allSleepComparisonData,
     allSleepDataProcessed,
     activitiesData,
     bpData,
@@ -280,6 +289,7 @@ export function DashboardTabs({
     rollingExcludeDays,
     rollingWindowDays,
     sleepCountingMode,
+    sleepComparisonSummary,
     spo2Data,
     stepsData,
     t,
