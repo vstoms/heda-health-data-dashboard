@@ -77,9 +77,18 @@ export interface SleepComparisonSummary {
   totalDays: number;
   daysWithNeed: number;
   missingNeedDays: number;
+  deficitDays: number;
+  surplusDays: number;
+  balancedDays: number;
   avgDurationSeconds: number | null;
   avgSleepNeedSeconds: number | null;
   avgGapSeconds: number | null;
+  maxDeficitSeconds: number | null;
+  maxSurplusSeconds: number | null;
+  gapRange: {
+    min: number;
+    max: number;
+  };
 }
 
 function filterRangeData<T>(
@@ -106,11 +115,22 @@ function summarizeSleepComparison(
     (point) =>
       point.sleepNeedSeconds !== null && point.gapSeconds !== null,
   );
+  const gapValues = comparablePoints
+    .map((point) => point.gapSeconds)
+    .filter((value): value is number => value !== null);
+  const deficitValues = gapValues.filter((value) => value < 0);
+  const surplusValues = gapValues.filter((value) => value > 0);
+  const balancedDays = gapValues.filter((value) => value === 0).length;
+  const rangeMin = gapValues.length > 0 ? Math.min(...gapValues, 0) : 0;
+  const rangeMax = gapValues.length > 0 ? Math.max(...gapValues, 0) : 0;
 
   return {
     totalDays: points.length,
     daysWithNeed: comparablePoints.length,
     missingNeedDays: points.filter((point) => point.sleepNeedMissing).length,
+    deficitDays: deficitValues.length,
+    surplusDays: surplusValues.length,
+    balancedDays,
     avgDurationSeconds: averageNullable(
       points.map((point) => point.durationSeconds),
     ),
@@ -120,10 +140,16 @@ function summarizeSleepComparison(
         .filter((value): value is number => value !== null),
     ),
     avgGapSeconds: averageNullable(
-      comparablePoints
-        .map((point) => point.gapSeconds)
-        .filter((value): value is number => value !== null),
+      gapValues,
     ),
+    maxDeficitSeconds:
+      deficitValues.length > 0 ? Math.min(...deficitValues) : null,
+    maxSurplusSeconds:
+      surplusValues.length > 0 ? Math.max(...surplusValues) : null,
+    gapRange: {
+      min: rangeMin,
+      max: rangeMax,
+    },
   };
 }
 
