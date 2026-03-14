@@ -22,8 +22,8 @@ Requirements for this milestone release. Each maps to roadmap phases.
 
 ### UX and Internationalization
 
-- [ ] **SLPU-01**: New sleep-gap labels, legends, and tooltips are internationalized through existing i18n files.
-- [ ] **SLPU-02**: Chart colors and baseline make deficit versus surplus visually distinguishable at a glance.
+- [x] **SLPU-01**: New sleep-gap labels, legends, and tooltips are internationalized through existing i18n files.
+- [x] **SLPU-02**: Chart colors and baseline make deficit versus surplus visually distinguishable at a glance.
 
 ## v2 Requirements
 
@@ -58,8 +58,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SLPD-02 | Phase 1 | Complete |
 | SLPD-03 | Phase 1 | Complete |
 | SLPD-04 | Phase 1 | Complete |
-| SLPU-01 | Phase 3 | Pending |
-| SLPU-02 | Phase 3 | Pending |
+| SLPU-01 | Phase 3 | Complete |
+| SLPU-02 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 9 total
@@ -68,4 +68,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-14 after completing plan 02-02*
+*Last updated: 2026-03-14 after completing plan 03-01*
