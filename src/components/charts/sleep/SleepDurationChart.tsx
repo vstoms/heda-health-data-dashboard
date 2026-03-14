@@ -197,7 +197,7 @@ export function SleepDurationChart({
         return createChartTooltip(formatDate(point.date), [
           {
             marker: points[0]?.marker,
-            label: t("charts.sleep.duration"),
+            label: t("charts.sleep.effectiveSleep"),
             value: formatSleepDuration(point.durationSeconds),
           },
           {

@@ -109,7 +109,7 @@ export function SleepChart({
         </CardHeader>
         <CardContent>
           <div className="text-sm text-muted-foreground">
-            {t("charts.noSleepDataSelectedRange")}
+            {t("charts.sleep.sleepGapEmptyState")}
           </div>
         </CardContent>
       </Card>
