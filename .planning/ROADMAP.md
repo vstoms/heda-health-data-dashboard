@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-00: Establish Wave 0 validation infrastructure and baseline fixtures
-- [ ] 01-01: Build canonical daily comparison parsing and aggregation contracts
+- [x] 01-01: Build canonical daily comparison parsing and aggregation contracts
 - [ ] 01-02: Integrate daily comparison data into Sleep chart rendering
 
 ### Phase 2: Gap Insight Visualization
@@ -67,6 +67,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Daily Sleep Comparison Foundation | 1/3 | In Progress | 01-00 |
+| 1. Daily Sleep Comparison Foundation | 2/3 | In Progress | 01-00, 01-01 |
 | 2. Gap Insight Visualization | 0/TBD | Not started | - |
 | 3. Sleep Gap UX Clarity | 0/TBD | Not started | - |
