@@ -50,6 +50,20 @@ function getGapState(point: DailySleepComparisonPoint) {
   return "balanced" as const;
 }
 
+function getLatestSelectedDate(chartData: DailySleepComparisonPoint[]) {
+  return chartData[chartData.length - 1]?.date ?? null;
+}
+
+function getFallbackSelectedDate(chartData: DailySleepComparisonPoint[]) {
+  return (
+    [...chartData]
+      .reverse()
+      .find((point) => point.sleepNeedSeconds !== null)?.date ??
+    getLatestSelectedDate(chartData) ??
+    null
+  );
+}
+
 export function SleepDurationChart({
   comparisonData,
   visibleComparisonData,
@@ -82,8 +96,13 @@ export function SleepDurationChart({
       (point) => point.date === selectedDate,
     );
 
+    if (selectedDate === null) {
+      setSelectedDate(getLatestSelectedDate(chartData));
+      return;
+    }
+
     if (!selectedStillVisible) {
-      setSelectedDate(chartData[chartData.length - 1].date);
+      setSelectedDate(getFallbackSelectedDate(chartData));
     }
   }, [chartData, selectedDate]);
 
@@ -94,6 +113,7 @@ export function SleepDurationChart({
 
     return (
       chartData.find((point) => point.date === selectedDate) ??
+      chartData.find((point) => point.date === getFallbackSelectedDate(chartData)) ??
       chartData[chartData.length - 1]
     );
   }, [chartData, selectedDate]);
