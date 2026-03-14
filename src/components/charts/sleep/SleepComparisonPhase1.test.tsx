@@ -112,7 +112,7 @@ function renderSleepChartEmptyState() {
           },
         }}
         events={[]}
-        range="30d"
+        range="1m"
         rollingWindowDays={7}
       />
     </ThemeProvider>,
