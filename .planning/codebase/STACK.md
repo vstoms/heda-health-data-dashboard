@@ -1,61 +1,142 @@
-# Heda Codebase Stack Map
+# Technology Stack
 
-## Runtime and App Model
-- Frontend-only SPA running in the browser; no server application is present in this repository.
-- Entry point is React mount in `src/main.tsx`.
-- Main app composition and data-loading flow is in `src/App.tsx`.
-- Project is ESM (`"type": "module"`) in `package.json`.
+**Analysis Date:** 2026-04-30
 
-## Core Frameworks
-- React 19 + React DOM 19 (`react`, `react-dom`) declared in `package.json`.
-- TypeScript 5 strict mode is enabled in `tsconfig.json` (`"strict": true`, `"noEmit": true`).
-- Vite 7 is the build/dev toolchain (`vite`, `@vitejs/plugin-react`) in `package.json` and `vite.config.ts`.
+## Languages
 
-## Build and Bundling
-- Dev server: `npm run dev` => `vite --host` in `package.json`.
-- Production build: `npm run build` => `tsc && vite build` in `package.json`.
-- Vite alias `@ -> ./src` is defined in `vite.config.ts` and mirrored by TS paths in `tsconfig.json`.
-- Manual chunk splitting for chart and export heavy libs is configured in `vite.config.ts`:
-  - `echarts` chunk: `echarts`, `echarts-for-react`
-  - `excel` chunk: `exceljs`
-- PWA build integration uses `vite-plugin-pwa` in `vite.config.ts`.
+**Primary:**
+- TypeScript ^5.9.3 - All source code in `src/`; strict mode, `noEmit`, ES2020 target
+- TSX - React component files throughout `src/components/`
 
-## Styling and UI
-- Tailwind CSS v4 with PostCSS pipeline is configured in `tailwind.config.js` and `postcss.config.js`.
-- Utility/class composition libs: `clsx`, `tailwind-merge`, `class-variance-authority` in `package.json`.
-- Radix UI primitives are used via packages in `package.json`:
-  - `@radix-ui/react-dialog`, `@radix-ui/react-select`, `@radix-ui/react-checkbox`, `@radix-ui/react-label`, `@radix-ui/react-slot`
-- UI component layer lives under `src/components/ui/`.
-- Motion/animation stack is `framer-motion` used in components like `src/App.tsx` and `src/components/FileUpload.tsx`.
+**Secondary:**
+- CSS - `src/index.css` (Tailwind directives + CSS custom properties for theming)
+- JSON - i18n translation files `src/i18n/en.json`, `src/i18n/fr.json`
 
-## Data and Persistence Stack
-- Local persistence is IndexedDB via `idb` (`src/services/db.ts`).
-- DB identity/versioning is centralized in `src/lib/constants.ts` (`DB_CONFIG`).
-- Health data normalization/aggregation lives in `src/services/healthDataStore.ts`.
-- Browser local preferences are persisted through `localStorage` usage in:
-  - `src/hooks/useLocalStorage.ts`
-  - `src/i18n/index.ts` (language persistence)
+## Runtime
 
-## Parsing and Domain Processing
-- ZIP parsing pipeline uses `jszip` in `src/services/parser.ts`.
-- CSV parsing dependency is `papaparse` (used by parser services under `src/services/parsers/`).
-- Metric parsing modules are split by domain under `src/services/parsers/`:
-  - `activityParser.ts`, `sleepParser.ts`, `stepsParser.ts`, `bodyParser.ts`, `bodyTemperatureParser.ts`
-- Report/metrics calculations are concentrated under `src/services/metrics/` and `src/services/reportGenerator.ts`.
+**Environment:**
+- Node.js v24.11.1 (no `.nvmrc` pin — uses system Node)
+- Project type: ESM (`"type": "module"` in `package.json`)
 
-## Charts and Visualization
-- Chart engine is Apache ECharts (`echarts`) with React wrapper (`echarts-for-react`) from `package.json`.
-- Chart components are grouped by metric under `src/components/charts/`.
-- Example integration files:
-  - `src/components/charts/sleep/SleepChart.tsx`
-  - `src/components/charts/weight/WeightMainChart.tsx`
+**Package Manager:**
+- npm 11.10.0
+- Lockfile: `package-lock.json` present
 
-## Internationalization
-- I18n runtime uses `i18next` + `react-i18next` configured in `src/i18n/index.ts`.
-- Locale resources currently shipped as JSON: `src/i18n/en.json`, `src/i18n/fr.json`.
+## Frameworks
 
-## Quality and Static Analysis Tooling
-- ESLint flat config with TypeScript + React rules in `eslint.config.js`.
-- Biome is included for formatting/lint checks via scripts and `biome.json`.
-- Unused export/dependency detection via `knip` script in `package.json`.
-- There is no dedicated unit test framework configured in scripts (`package.json`).
+**Core:**
+- React ^19.2.4 — UI framework, strict mode enabled (`src/main.tsx`)
+- React DOM ^19.2.4 — DOM rendering
+
+**Styling:**
+- Tailwind CSS ^4.1.18 — Utility-first CSS
+  - Config: `tailwind.config.js`
+  - PostCSS integration: `postcss.config.js` via `@tailwindcss/postcss`
+  - Autoprefixer ^10.4.24
+  - `tailwindcss-animate` ^1.0.7 — Animation utilities
+  - Dark mode: class strategy (`darkMode: ["class"]`)
+- shadcn/ui — Component system built on Radix UI, new-york style
+  - Config: `components.json` (baseColor: stone, cssVariables: true)
+  - Theme uses CSS custom properties (`hsl(var(--primary))` pattern)
+  - Icon library: lucide
+
+**Animation:**
+- Framer Motion ^12.34.0 — Declarative animations
+  - Used in `src/components/ui/MotionCard.tsx`, `src/components/ui/MotionWrapper.tsx`, `src/lib/animations.ts`
+
+**Charting:**
+- Apache ECharts ^6.0.0 — Chart engine
+- echarts-for-react ^3.0.6 — React wrapper
+  - Chunked separately in build output: `manualChunks: { echarts: ["echarts", "echarts-for-react"] }`
+
+**Internationalization:**
+- i18next ^25.8.7 — i18n core
+- react-i18next ^16.5.4 — React integration
+  - Languages: English (`en`), French (`fr`)
+  - Config: `src/i18n/index.ts`
+  - Language detection: `localStorage` key `withings_language`, falls back to `navigator.language`
+
+**Testing:**
+- Vitest ^4.1.0 — Test runner
+  - Config: `vitest.config.ts` (merges vite config)
+  - Environment: jsdom ^28.1.0
+  - Coverage provider: v8 (`@vitest/coverage-v8` ^4.1.0)
+- @testing-library/react ^16.3.2 — Component testing utilities
+- @testing-library/jest-dom ^6.9.1 — DOM matchers
+- Setup file: `src/test/setup.ts`
+
+**Build/Dev:**
+- Vite ^7.3.1 — Bundler and dev server
+  - Config: `vite.config.ts`
+  - Base path: `./` (relative, suitable for static hosting)
+  - Dev: `vite --host`; Build: `tsc && vite build`
+- @vitejs/plugin-react ^5.1.4 — React Fast Refresh
+- vite-plugin-pwa ^1.2.0 — Progressive Web App support
+  - Workbox service worker, auto-update registration
+  - Manifest defined inline in `vite.config.ts`
+
+## Key Dependencies
+
+**UI Primitives (Radix UI):**
+- `@radix-ui/react-checkbox` ^1.3.3
+- `@radix-ui/react-dialog` ^1.1.15
+- `@radix-ui/react-label` ^2.1.8
+- `@radix-ui/react-select` ^2.2.6
+- `@radix-ui/react-slot` ^1.2.4
+
+**UI Utilities:**
+- `class-variance-authority` ^0.7.1 — Variant-based className builder
+- `clsx` ^2.1.1 — Conditional className merging
+- `tailwind-merge` ^3.4.0 — Tailwind class conflict resolution
+- `lucide-react` ^0.564.0 — Icon library
+
+**Data Handling:**
+- `papaparse` ^5.5.3 — CSV parsing (Withings export files in `src/services/parsers/`)
+- `jszip` ^3.10.1 — ZIP file reading (`src/services/parser.ts`)
+- `idb` ^8.0.3 — IndexedDB wrapper (`src/services/db.ts`)
+- `exceljs` ^4.4.0 — Excel export (`src/services/exportService.ts`), chunked separately in build
+- `file-saver` ^2.0.5 — Browser file download trigger
+
+**UX:**
+- `react-dropzone` ^15.0.0 — Drag-and-drop file upload (`src/components/FileUpload.tsx`)
+
+**Code Quality (dev):**
+- Biome 2.3.15 — Formatter + linter (`biome.json`)
+  - Indent: 2 spaces, double quotes, import organization enabled
+  - Tailwind directives: CSS parser support enabled
+- ESLint ^9.39.2 — Additional linting (`eslint.config.js`)
+  - Plugins: `eslint-plugin-react`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`
+  - TypeScript: `typescript-eslint` ^8.55.0
+- knip ^5.83.1 — Unused exports/imports checker
+
+## Configuration
+
+**Environment:**
+- No `.env` files present or required — fully client-side, no secrets
+- User preferences stored in `localStorage` (keys in `src/lib/constants.ts` `STORAGE_KEYS`)
+- Health data persisted in browser IndexedDB (`withings-health-db`, version 2, store `healthData`)
+
+**Build:**
+- `vite.config.ts` — primary build config, PWA manifest, chunk splitting
+- `tsconfig.json` — strict mode, ES2020 target, `@` alias → `./src`
+- `tsconfig.node.json` — Node tooling config
+- `postcss.config.js` — Tailwind + autoprefixer
+- `tailwind.config.js` — theme tokens, dark mode class strategy
+- `biome.json` — formatter/linter rules
+- `eslint.config.js` — ESLint rules
+
+## Platform Requirements
+
+**Development:**
+- Node.js (system version, no pin — currently v24.11.1 in use)
+- npm 11+
+
+**Production:**
+- Static file hosting only — no server runtime required
+- Deployed at `https://heda.tosc.fr/`
+- PWA-capable: service worker + web manifest via `vite-plugin-pwa`
+- All computation, parsing, and storage happen entirely in the browser
+
+---
+
+*Stack analysis: 2026-04-30*
